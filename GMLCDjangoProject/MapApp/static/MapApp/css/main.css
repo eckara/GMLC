@@ -1,0 +1,94 @@
+body{
+    background: #F7F7F7 !important;
+    color: #73879C;
+    margin:0px;
+    padding:0px;
+    height:85%;
+}
+
+.top5 { margin-top:50px; }
+.bottom5 { margin-bottom:55px; }
+
+#hourly-utility-chart{
+  padding: 2%
+}
+
+#loading {
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   position: fixed;
+   display: block;
+   opacity: 0.7;
+   background-color: #fff;
+   z-index: 99;
+   text-align: center;
+}
+
+#loading-image {
+  position: absolute;
+  top: 100px;
+  left: 240px;
+  z-index: 100;
+}
+
+#voltage-magnitute-chart{
+  padding: 2%
+}
+#type-value-chart{
+  padding: 2%
+}
+#month-value-chart{
+  padding: 2%
+}
+#chart-titles{
+  padding: 2%
+}
+topnavbar {
+    margin: 0;
+}
+
+
+#topnavbar.affix {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+#gmlc-image{
+    max-width: 4%;
+    max-height:4%;
+    min-height:2%;
+    min-width:2%;
+
+}
+
+#slac-logo{
+  max-width: 35%;
+  max-height:44%;
+  padding-top: 2%;
+}
+#llnl-logo{
+  max-width: 35%;
+  max-height:45%;
+  padding-top: 2%;
+}
+#lbnl-logo{
+  max-width: 15%;
+  max-height: 15%;
+}
+#footer{
+  padding: 1%;
+  background-color: gray;
+}
+
+#banner {
+     background-color: gray;
+     padding : 0.5%;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav {
+    margin-left: -30px;
+  }
+}

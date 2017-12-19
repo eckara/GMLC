@@ -1,0 +1,24 @@
+[{
+    "class": "transmission",
+    "longitude":"-117.9220",
+    "latitude":"34.0989",
+    "name": "VINCENT_154"
+  },
+  {
+    "class": "transmission",
+    "longitude":"-117.9220",
+    "latitude":"34.1",
+    "name": "VINCENT_153"
+  },
+  {
+    "class": "transmission",
+    "longitude":"-117.9188",
+    "latitude":"33.6412",
+    "name": "MESA_CAL_143"
+  },
+  {
+    "class": "transmission",
+    "longitude":"-120.8689",
+    "latitude":"38.2857",
+    "name": "PARDEE_150"
+}]

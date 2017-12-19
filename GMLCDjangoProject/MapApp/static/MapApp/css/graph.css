@@ -1,0 +1,46 @@
+.axis path,
+.axis line {
+    stroke: #1abb9c;
+}
+.light-green {
+    background-color: #26B99A;
+}
+.dark-green {
+    background-color: #03586A;
+}
+.supply {
+    fill: #03586A;
+    opacity: 0.38;
+    stroke: #03586A;
+    stroke-width: 2px;
+}
+
+.demand {
+    fill: #26B99A;
+    opacity: 0.38;
+    stroke: #26B99A;
+    stroke-width: 2px;
+}
+
+.line {
+    fill: none;
+    stroke: #1abb9c;
+    stroke-width: 2px;
+}
+
+.area {
+    stroke: steelblue;
+    fill: #1abb9c;
+}
+
+.tick text {
+    font-size: 12px;
+}
+.tick line {
+    opacity: 0.5
+}
+
+#graphArea {
+    display: table;
+    margin: 0 auto;
+}

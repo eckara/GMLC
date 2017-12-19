@@ -1,0 +1,3 @@
+case,pv_installed,storage_installed,chp_installed,dg_installed,renewable_generation,dg_generation,electricity_consumption
+bc,0.0,0.0,0.0,0.0,0.0,0.0,262046.02
+bci,13.04,0.0,0.0,0.0,27417.45,0.0,262046.02

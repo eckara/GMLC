@@ -1,0 +1,166 @@
+
+/*.right_col {
+  display: flex;
+  float: right;
+}*/
+
+#control-bar {
+	padding-left: 3em;
+}
+
+
+.graph{
+	height: 23%;
+	width: 100%;
+}
+
+.axisLabel {
+    position: absolute;
+    text-align: center;
+    font-size: 12px;
+}
+
+.xaxisLabel {
+    bottom: 3px;
+    left: 0;
+    right: 0;
+}
+
+.yaxisLabel {
+    top: 50%;
+    left: 2px;
+    transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -webkit-transform:  rotate(-90deg);
+    transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+}
+
+
+.card {
+  /*padding: 0;
+  margin: : 0;*/
+	font-size: 1.2em;
+}
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+  }
+.ui-autocomplete {
+   max-height: 20em;
+   overflow-y: auto;
+   /* prevent horizontal scrollbar */
+   overflow-x: hidden;
+ }
+ /* IE 6 doesn't support max-height
+  * we use height instead, but this forces the menu to always be this tall
+  */
+ * html .ui-autocomplete {
+   height: 20em;
+ }
+/*#graph0{
+	height: 33%;
+	width: 100%;
+}
+#graph1{
+    height: 33%;
+    width: 100%;
+}
+#graph2{
+    height: 33%;
+    width: 100%;
+}
+#graph3{
+    height: 33%;
+    width: 100%;
+}*/
+
+#graphAggregateLoad{
+	height: 33%;
+	width: 100%;
+}
+#graphSolarProxy
+{	height: 33%;
+    width: 100%;
+}
+
+
+#starting-slider {
+    width: 80%;
+    /*float: left;*/
+    margin: 1em;
+    /*margin-left: 3em;*/
+}
+
+#time-slider {
+    width: 80%;
+    /*float: left;*/
+    margin: 1em;
+    margin-left: 3em;
+}
+
+#predict-slider {
+    width: 80%;
+    /*float: left;*/
+    margin: 1em;
+    /*margin-left: 3em;*/
+}
+
+.slider-label {
+  margin-left: 2em;
+}
+
+.slider-text {
+  padding: 1em;
+}
+
+.ui-draggable, .ui-droppable {
+	background-position: top;
+}
+
+#starting-slider-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    margin-left: -1em;
+    text-align: center;
+    line-height: 1.6em;
+  }
+
+#time-slider-handle {
+    width: 6em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    margin-left: -3em;
+    text-align: center;
+    line-height: 1.6em;
+  }
+
+#predict-slider-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    margin-left: -1em;
+    text-align: center;
+    line-height: 1.6em;
+  }

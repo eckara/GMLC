@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block style %}
+
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/leaflet.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/dc.css' %}" />
+
+{% endblock %}
+
+
+{% block content %}
+
+<style type="text/css">
+    #map1 { width: 100%; height: 50%; float: center;  margin-top: 1%; padding: 0px;}
+    #map2 { width: 100%; height: 50%; float: center;  margin-top: 1%; padding: 0px;}
+    /*.map { width: 100%; height: 90%; float: center; margin-right: 1%;}*/
+    /*.padbypass { width: 100%; margin-top: 20px;}*/
+</style>
+<!-- <div class="page-header">
+  <h1>GMLC 1.3.5: DER Siting and Optimization tool to enable large scale deployment of DER in California</h1>
+</div> -->
+<div class="row">
+   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+     <select id="ScenarioSelector1">
+       <option value="Scenario0">Base</option>
+       <option value="Scenario1">Scenario 1</option>
+       <option value="Scenario2">Scenario 2</option>
+       <option value="Scenario3">Scenario 3</option>
+     </select>
+     <select id="MonthSelector1">
+         <option value=''>--Select Month--</option>
+         <option selected value='janaury'>January</option>
+         <option value='february'>February</option>
+         <option value='march'>March</option>
+         <option value='april'>April</option>
+         <option value='may'>May</option>
+         <option value='june'>June</option>
+         <option value='july'>July</option>
+         <option value='august'>August</option>
+         <option value='september'>September</option>
+         <option value='october'>October</option>
+         <option value='november'>November</option>
+         <option value='december'>December</option>
+     </select>
+     <select id="TypeSelector1">
+       <option value="weekday">Weekday</option>
+       <option value="weekend">Weekend</option>
+     </select>
+     <strong id="map_sub_title"></strong>
+     <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
+     <div class="clearfix"></div>
+     <div  id="map1"></div>
+
+
+   </div>
+
+   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+     <select id="ScenarioSelector2">
+       <option value="Scenario0">Base</option>
+       <option value="Scenario1">Scenario 1</option>
+       <option value="Scenario2">Scenario 2</option>
+       <option value="Scenario3">Scenario 3</option>
+     </select>
+     <select id="MonthSelector2">
+         <option value='janaury'>January</option>
+         <option value='february'>February</option>
+         <option value='march'>March</option>
+         <option value='april'>April</option>
+         <option value='may'>May</option>
+         <option value='june'>June</option>
+         <option value='july'>July</option>
+         <option value='august'>August</option>
+         <option value='september'>September</option>
+         <option value='october'>October</option>
+         <option value='november'>November</option>
+         <option value='december'>December</option>
+     </select>
+     <select id="TypeSelector2">
+       <option value="weekday">Weekday</option>
+       <option value="weekend">Weekend</option>
+     </select>
+     <strong id="map_sub_title"></strong>
+     <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
+     <div class="clearfix"></div>
+   <div  id="map2"></div>
+
+
+ </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="voltage-magnitute-chart2">
+   <strong>Voltage Magnitude</strong>
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="voltage-magnitute-chart">
+   <strong>Voltage Magnitude</strong>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="hourly-utility-chart">
+               <strong>Utility Purchase & On-site Generation</strong>
+               <a class="reset" href="javascript:hourlyUtilityPurchaseLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+               <div class="clearfix"></div>
+  </div>
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="hourly-utility-chart2">
+              <strong>Utility Purchase & On-site Generation</strong>
+              <a class="reset" href="javascript:hourlyUtilityPurchaseLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+              <div class="clearfix"></div>
+ </div>
+
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="power-flow-chart">
+             <strong>Active Power Flows</strong>
+             <a class="reset" href="javascript:powerFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+             <div class="clearfix"></div>
+  </div>
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="power-flow-chart2">
+            <strong>Active Power Flows</strong>
+            <a class="reset" href="javascript:powerFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+            <div class="clearfix"></div>
+ </div>
+
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-flow-chart">
+             <strong>Reactive Power Flows</strong>
+             <a class="reset" href="javascript:reactiveFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+             <div class="clearfix"></div>
+  </div>
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-flow-chart2">
+            <strong>Reactive Power Flows</strong>
+            <a class="reset" href="javascript:reactiveFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+            <div class="clearfix"></div>
+ </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+<!-- jQuery Sparklines -->
+function clearResultsTag() {
+  nodeChart.filterAll();
+  dc.redrawAll();
+  document.getElementById("map_sub_title").innerHTML = "";
+  document.getElementById("map_reset").style = "display: none;";
+};
+
+
+$('#ScenarioSelector1').change(function() {
+    //Use $option (with the "$") to see that the variable is a jQuery object
+    var $option = $(this).find('option:selected');
+    //Added with the EDIT
+    var value = $option.val();//to get content of "value" attrib
+    var text = $option.text();//to get <option>Text</option> content
+});
+</script>
+
+
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/L.Map.Sync.js' %} "></script>
+
+
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/d3.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/crossfilter.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/dc.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/colorbrewer.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/libraries/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/dualmap.js' %}"></script>
+<script type="text/javascript" src="{% static 'MapApp/js/dc-resizing.js' %}"></script>
+
+
+{% endblock %}

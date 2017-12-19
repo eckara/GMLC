@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GMLC 1.3.5 Interface</title>
+    <meta name="robots" content="index follow" />
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/leaflet.css' %}"> -->
+    {% block style %}{% endblock %}
+</head>
+
+<body>
+
+  <div class="container" id="banner">
+    <div class="row">
+      <a href='https://gridmod.labworks.org'><img class="img-responsive center-block" id="gmlc-image" src='https://gridmod.labworks.org//sites/all/themes/project/grid2017/images/logo.svg'>
+      </a>
+    </div>
+  </div>
+  <div class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!-- <a class='navbar-brand' href='https://gridmod.labworks.org'><img src='https://gridmod.labworks.org//sites/all/themes/project/grid2017/images/logo.svg'>
+          </a> -->
+        </div>
+        <div id="navbar1" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">GMLC 1.3.5</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Scenarios <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/visualization/scenario0">Base Case</a></li>
+                <li><a href="/visualization/scenario1">Scenario 1</a></li>
+                <li><a href="/visualization/scenario2">Scenario 2</a></li>
+                <li><a href="/visualization/scenario3">Scenario 3</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Read More...</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+      <!--/.container-fluid -->
+    </nav>
+
+    {% block content %}{% endblock %}
+    <script type="text/javascript" src="{% static 'MapApp/js/libraries/jquery.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'MapApp/js/libraries/bootstrap.min.js' %}"></script>
+    <!-- <script type="text/javascript" src="{% static 'MapApp/js/libraries/leaflet.js' %}"></script> -->
+
+    <script>
+    $('#topnavbar').affix({
+        offset: {
+            top: $('#banner').height()
+        }
+    });
+    </script>
+
+    {% block script %}{% endblock %}
+
+</body>
+
+
+<footer>
+  <div class="row" id="footer">
+    <div class="col-xs-4">
+        <a href="https://slac.stanford.edu">
+             <img src="{% static 'MapApp/images/slac-logo-primary.png' %}" id="slac-logo" class="img-responsive center-block">
+        </a>
+    </div>
+      <div class="col-xs-4">
+          <a href="https://www.lbnl.gov" >
+               <img src="{% static 'MapApp/images/Berkeley_Lab_Logo_Large.png' %}" id="lbnl-logo" class="img-responsive center-block">
+          </a>
+      </div>
+       <div class="col-xs-4">
+          <a href="https://www.llnl.gov">
+               <img src="{% static 'MapApp/images/LLNL-logo.png' %}" id="llnl-logo" class="img-responsive  center-block">
+          </a>
+      </div>
+
+  </div>
+</footer>
+</html>

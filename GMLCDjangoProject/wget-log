@@ -1,0 +1,6 @@
+--2017-12-05 14:00:39--  https://s3-us-west-1.amazonaws.com/vader.data.gmlc/data-descriptor.json?Signature=P%2BjvRJS4v1%2F%2FvGw%2F%2BDxRe2yuhT0%3D
+Resolving s3-us-west-1.amazonaws.com... 54.231.236.41
+Connecting to s3-us-west-1.amazonaws.com|54.231.236.41|:443... connected.
+HTTP request sent, awaiting response... 403 Forbidden
+2017-12-05 14:00:39 ERROR 403: Forbidden.
+

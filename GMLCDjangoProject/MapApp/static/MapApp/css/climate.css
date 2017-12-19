@@ -1,0 +1,37 @@
+.row-no-gutter{
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.climate-tab{
+    cursor:pointer;
+}
+
+.dropdown-menu{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.climate-panel{
+    width:300px;
+    height:300px;
+    background: #ffffff;
+}
+
+.weather-item{
+    height:100px;
+    width:100px;
+    transition: all 0.5s ease;
+    padding: 0 0 0 0;
+    text-align: center;
+    font-size: smaller;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    border-width: 0.5px 0.5px 0.5px 0.5px;
+    border-style: solid;
+    border-color: #eaeaea;
+    background: #f2f2f2;
+}
+
+.weather-item:hover{
+    background: #ffffff;
+}
