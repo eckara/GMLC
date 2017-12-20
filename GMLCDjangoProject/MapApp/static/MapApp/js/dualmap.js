@@ -17,11 +17,34 @@ var voltageMagnitudeLine2 = dc.compositeChart('#voltage-magnitute-chart2');
 var powerFlowLine2 = dc.compositeChart('#power-flow-chart2');
 var reactiveFlowLine2 = dc.compositeChart('#reactive-flow-chart2');
 
+
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
 //   heatmapData=datum
 var lineData2
 var nodeData2
+
 var scenario_name2='scenario2'
+
+$( document ).ready(function() {
+    $("#ScenarioSelector1").val(scenario_name2);
+});
+
+document.getElementById('ScenarioSelector1').onchange = function(e) {
+    if (e.target.value == 'Base') {
+      scenario_name2='Base';
+    }
+    else if (e.target.value == 'Scenario1') {
+      scenario_name2='scenario1';
+    }
+    else if (e.target.value == 'Scenario2') {
+      scenario_name2='scenario2';
+    }
+    else if (e.target.value == 'Scenario3') {
+      scenario_name2='scenario3';
+    }
+    location.reload();
+};
+
 d3.csv('/static/MapApp/data/'+scenario_name2+'_lines.csv', function (data) {
   lineData2=data
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
@@ -47,7 +70,6 @@ d3.csv('/static/MapApp/data/'+scenario_name2+'.csv', function (data) {
   var lineDimension2 = ldx2.dimension(function (d) {
       return d.line;
   });
-
 
   var lineMonthDimension2 = ldx2.dimension(function (d) {
       return d.month;
@@ -415,6 +437,9 @@ function nonzero_min(chart) {
   return chart;
 };
 
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 
 var lineData
 var nodeData
@@ -456,7 +481,6 @@ d3.csv('/static/MapApp/data/'+scenario_name+'.csv', function (data) {
   var lineDimension = ldx.dimension(function (d) {
       return d.line;
   });
-
 
   var lineMonthDimension = ldx.dimension(function (d) {
       return d.month;
