@@ -28,9 +28,12 @@ def scenario(request,scenario_name):
     context = {"scenario_name": scenario_name}
     return HttpResponse(template.render(context, request))
 
-def transmission(request):
+def transmission(request,scenario_name):
+    if scenario_name not in ["scenario0","scenario1","scenario2","scenario3"]:
+        scenario_name="scenario0"
     template = loader.get_template('visualization_transmission.html')
-    return HttpResponse(template.render(request))
+    context = {"scenario_name": scenario_name}
+    return HttpResponse(template.render(context, request))
 
 def comparison(request):
     template = loader.get_template('visualization_comparison.html')

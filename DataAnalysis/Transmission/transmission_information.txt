@@ -1,0 +1,12 @@
+154, VINCENT, WECCbus154data.csv, 34.0989, -117.9220
+150, PARDEE, 38.2857, -120.8689
+143, MESA CAL, 33.6412, -117.9188
+153, VINCENT, 34.1, -117.9220
+
+from, to, filename
+150, 154, WECCline176data.csv
+150, 154, WECCline177data.csv
+143, 154, WECCline174data.csv
+153, 154, WECCline256data.csv 
+153, 154, WECCline257data.csv 
+153, 154, WECCline258data.csv 

@@ -23,27 +23,16 @@ var reactiveFlowLine2 = dc.compositeChart('#reactive-flow-chart2');
 var lineData2
 var nodeData2
 
-var scenario_name2='scenario2'
-
-$( document ).ready(function() {
-    $("#ScenarioSelector1").val(scenario_name2);
-});
-
 document.getElementById('ScenarioSelector1').onchange = function(e) {
-    if (e.target.value == 'Base') {
-      scenario_name2='Base';
-    }
-    else if (e.target.value == 'Scenario1') {
-      scenario_name2='scenario1';
-    }
-    else if (e.target.value == 'Scenario2') {
-      scenario_name2='scenario2';
-    }
-    else if (e.target.value == 'Scenario3') {
-      scenario_name2='scenario3';
-    }
-    location.reload();
+    scenario_name=e.target.value
+    localStorage.setItem("scenario_name", e.target.value);
 };
+
+document.getElementById('ScenarioSelector2').onchange = function(e) {
+  scenario_name2=e.target.value
+  localStorage.setItem("scenario_name2", e.target.value);
+};
+
 
 d3.csv('/static/MapApp/data/'+scenario_name2+'_lines.csv', function (data) {
   lineData2=data
@@ -443,7 +432,6 @@ function nonzero_min(chart) {
 
 var lineData
 var nodeData
-var scenario_name='scenario1'
 d3.csv('/static/MapApp/data/'+scenario_name+'_lines.csv', function (data) {
 
   lineData=data

@@ -3,9 +3,7 @@
 
 {% load staticfiles %}
 <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/leaflet.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/map.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/dc.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'MapApp/css/dc-resizing.css' %}" />
 
 {% endblock %}
 
@@ -45,6 +43,9 @@
              <a class="reset" href="javascript:monthValuePie.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
              <div class="clearfix"></div>
   </div>
+ </div>
+  <div class="row">
+
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="hourly-utility-chart">
                <strong>Utility Purchase & On-site Generation</strong>
                <a class="reset" href="javascript:hourlyUtilityPurchaseLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>

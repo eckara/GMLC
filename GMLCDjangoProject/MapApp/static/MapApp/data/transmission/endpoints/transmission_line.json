@@ -1,0 +1,149 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -120.8689,
+                      38.2857,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline176",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -120.8689,
+                      38.2857,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline177",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -117.9188,
+                      33.6412,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline174",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -117.9220,
+                      34.1,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline256",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -117.9220,
+                      34.1,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline257",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                      -117.9220,
+                      34.1,
+                        50
+                    ],
+                    [
+                      -117.9220,
+                      34.0989,
+                        50
+                    ]
+                ]
+            },
+            "properties": {
+                "name": "WECCline258",
+                "styleUrl": "#transmission_line",
+                "styleHash": "5223c3a6",
+                "description": "\n                    "
+            }
+        }
+    ]
+}

@@ -22,14 +22,13 @@
 <div class="row">
    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
      <select id="ScenarioSelector1">
-       <option value="Scenario0">Base</option>
+       <option value="Scenario0" selected= "selected">Base</option>
        <option value="Scenario1">Scenario 1</option>
        <option value="Scenario2">Scenario 2</option>
        <option value="Scenario3">Scenario 3</option>
      </select>
      <select id="MonthSelector1">
-         <option value=''>--Select Month--</option>
-         <option selected value='janaury'>January</option>
+         <option value='janaury' selected= "selected">January</option>
          <option value='february'>February</option>
          <option value='march'>March</option>
          <option value='april'>April</option>
@@ -43,7 +42,7 @@
          <option value='december'>December</option>
      </select>
      <select id="TypeSelector1">
-       <option value="weekday">Weekday</option>
+       <option value="weekday" selected= "selected">Weekday</option>
        <option value="weekend">Weekend</option>
      </select>
      <strong id="map_sub_title"></strong>
@@ -62,7 +61,7 @@
        <option value="Scenario3">Scenario 3</option>
      </select>
      <select id="MonthSelector2">
-         <option value='janaury'>January</option>
+         <option value='january'>January</option>
          <option value='february'>February</option>
          <option value='march'>March</option>
          <option value='april'>April</option>
@@ -76,9 +75,11 @@
          <option value='december'>December</option>
      </select>
      <select id="TypeSelector2">
-       <option value="weekday">Weekday</option>
+       <option value="weekday" selected= "selected">Weekday</option>
        <option value="weekend">Weekend</option>
      </select>
+     <input type="button" value="Compare" onClick="window.location.reload()">
+
      <strong id="map_sub_title"></strong>
      <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
      <div class="clearfix"></div>
@@ -147,6 +148,15 @@
 
 {% block script %}
 <script>
+scenario_name=localStorage.getItem("scenario_name")
+scenario_name2=localStorage.getItem("scenario_name2")
+if (scenario_name2 === null){scenario_name2='Scenario1'};
+if (scenario_name === null){scenario_name='Scenario0'};
+$("#ScenarioSelector1").val(scenario_name).change();
+$("#ScenarioSelector2").val(scenario_name2).change();
+
+console.log(scenario_name)
+console.log( scenario_name2)
 <!-- jQuery Sparklines -->
 function clearResultsTag() {
   nodeChart.filterAll();
