@@ -11,65 +11,104 @@
 {% block content %}
 <style type="text/css">
     #map1 { width: 100%; height: 50%; float: left; margin-right:0 %; margin-top:0%; padding: 0px; }
+    #tab { width: 100%; margin-bottom:1%;}
+
 </style>
+<div container id="tab">
+ <select id="ScenarioSelector">
+ </select>
+ <input type="button" value="Visualize" onClick="window.location.reload()">
+</div>
 <div id="map1">
 
 </div>
 <div class="container">
    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
      <strong id="map_sub_title"></strong>
      <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
      <div class="clearfix"></div>
-
+   </div>
    </div>
 
-  <div class="col-xs-12 col-md-12 col-md-12 col-lg-12">
   <div class="row">
 
-  <div class="col-xs-12 col-md-12 col-md-12 col-lg-6" id="voltage-magnitute-chart">
+  <div class="col-xs-12 col-md-12 col-md-12 col-lg-6" >
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="voltage-magnitute-chart">
            <strong>Voltage Magnitude on Buses</strong>
            <a class="reset" href="javascript:voltageMagnitudeLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
 
            <div class="clearfix"></div>
   </div>
-  <div class="col-xs-12 col-md-12 col-md-12 col-lg-6" id="voltage-angle-chart">
+  </div>
+
+  <div class="col-xs-12 col-md-12 col-md-12 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="voltage-angle-chart">
              <strong>Voltage Angle on Buses</strong>
              <a class="reset" href="javascript:voltageAngleLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
              <div class="clearfix"></div>
+    </div>
   </div>
   </div>
   <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="active-power-chart">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="active-power-chart">
                <strong>Active Power on Buses</strong>
                <a class="reset" href="javascript:activePowerLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
                <div class="clearfix"></div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-power-chart">
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="reactive-power-chart">
                    <strong>Reactive Power on Buses</strong>
                    <a class="reset" href="javascript:reactivePowerLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
                    <div class="clearfix"></div>
+      </div>
     </div>
    </div>
    <div class="row">
-     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="power-flow-chart">
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="power-flow-chart">
                 <strong>Active Power on Lines</strong>
                 <a class="reset" href="javascript:powerFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
                 <div class="clearfix"></div>
+        </div>
      </div>
-     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-flow-chart">
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="reactive-flow-chart">
                     <strong>Reactive Power on Lines</strong>
                     <a class="reset" href="javascript:reactiveFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
                     <div class="clearfix"></div>
+        </div>
      </div>
     </div>
-   </div>
- </div>
+
 
 {% endblock %}
 
 {% block script %}
 <script>
-var scenario_name='{{ scenario_name }}'
+var scenario_name_ts
+
+$.getJSON("{% static 'MapApp/data/descriptor.json' %}", function(data){
+  //clear the current content of the select
+  $('#ScenarioSelector').html('');
+  //iterate over the data and append a select option
+  $.each(data.transmission[0].scenarios, function(key, val){
+    $('#ScenarioSelector').append('<option value="' + val.value + '">' + val.name + '</option>');
+  })
+  // select the previously queried value
+  scenario_name_ts=localStorage.getItem("scenario_name_ts")
+  var options = $('#ScenarioSelector').find('option')
+  if (scenario_name_ts === null){scenario_name_ts=options[0].value};
+  $("#ScenarioSelector").val(scenario_name_ts).change();
+  $.getScript("{% static 'MapApp/js/transmission.js' %}")
+
+});
+
+
+
+
 
 <!-- jQuery Sparklines -->
 function clearResultsTag() {
@@ -98,7 +137,7 @@ function clearResultsTag() {
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/dc.js' %}"></script>
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/colorbrewer.js' %}"></script>
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'MapApp/js/transmission.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'MapApp/js/transmission.js' %}"></script> -->
 
 
 {% endblock %}

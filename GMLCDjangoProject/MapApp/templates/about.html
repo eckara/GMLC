@@ -9,20 +9,43 @@
 
 {% block content %}
 <div class="page-header">
-  <h1>GMLC 1.3.5: DER Siting and Optimization tool to enable large scale deployment of DER in California</h1>
+  <h2>GMLC 1.3.5: DER Siting and Optimization tool to enable large scale deployment of DER in California</h1>
 </div>
 
   <div class="container">
-    <h3>Demonstration Case</h3>
-
-    <p>Department of Energy Grid Modernization Laboratory Consortium (GMLC) is working on Project 1.3.5, “DER Siting and Optimization tool to enable large scale deployment of DER in California”. The goal of the project is to develop a prototype software framework to couple behind-the-meter DER adoption models with T&D power flow co-simulation models, supported by spatial visualization of results. This document describes uses cases to test the software prototype.</p>
+    <p>Department of Energy Grid Modernization Laboratory Consortium (GMLC) is working on Project 1.3.5, “DER Siting and Optimization tool to enable large scale deployment of DER in California”. The goal of the project is to develop a prototype software framework to couple behind-the-meter DER adoption models with transmission and distribution power flow co-simulation models, supported by spatial visualization of results. This document describes uses cases to test the software prototype.</p>
 
     <p>Different states throughout the country are developing aggressive DER penetration targets. California is in the forefront of those efforts with statewide goals to integrate 15GW of distributed energy resources, including 12 GW of renewable energy, into distribution systems. These ambitious goals require overcoming challenges created by the lack of comprehensive tools to understand most cost-effective locations DER and impact on overall-system reliability.</p>
 
     <p>The development of a prototype software framework leverages existing capabilities currently available at the different National Labs participating in this project. Specifically, an upgraded and customized version of Lawrence Berkeley National Laboratory's behind-the-meter DER optimization engine DER-CAM1 is used to find the most cost-effective behind-the-meter distributed generation and storage solutions and estimate private DER adoption patterns throughout distribution networks. These DER adoption results and corresponding dispatch decisions are integrated with Lawrence Livermore National Laboratory’s Transmission and Distribution co-simulation platform, ParGrid2, that couples GridLAB-D3 distribution level network models with GriDyn4 transmission level network models and allows estimating DER impacts throughout the electric grid. DER adoption results, as well DER dispatch and system level impacts are visualized through a mapping and visualization platform developed by SLAC. </p>
 
     <p>One of the key challenges created by large scale deployment of DER in distribution grids is the need to accommodate for potentially drastic changes in both grid planning and operations. Widespread rooftop PV, for instance, is currently leading to a phenomenon commonly referred to as the “duck curve”, reflecting the dramatic changes in net loads during afternoon hours of PV production.</p>
+
+    As part of this project, the following scenarios are implemented:
+    <h3>DER scenario 0 – No DER</h3>
+
+    <p> Studying both the economic and grid impacts of widespread DER in the electric grid first requires establishing a reference point. This is addressed by a scenario where no new DER investments are allowed, and the network models are analyzed using only their reference loads. This scenario allows performing different before / after analysis.</p>
+
+    <h3>DER scenario 1 – PV only</h3>
+      <p> The State of California is currently in the forefront of Solar PV installations, with close to 600,000 solar projects currently deployed across the state totaling approximately 4.5 GW of installed capacity. In the pursuit for the aggressive statewide goals of DER and renewable penetration in the distribution network it is expected that PV will continue to play a fundamental role, and very high levels of PV penetration will likely continue to pose technical challenges as illustrated by the duck curve and its impact on both net loads and ramping requirements.</p>
+
+      <p> To address this scenario, the first DER investment option considered in the demonstration focuses  on the deployment of PV systems throughout the grid, and includes PV deployments both for the residential and commercial sector.</p>
+
+    <h3>DER scenario 2 – PV and storage</h3>
+      <p> Following the analysis of pure PV installations, the second scenario of DER investment options addresses the coupling of PV and storage solutions. The inclusion of storage introduces flexibility in the ability to participate in price-driven demand response programs such as time-of-use rates and demand charges by shifting customer loads, but also addresses generation intermittency and enables dispatching PV generation making it a natural extension to DER Portfolio Option 1. Further, the coupling of PV and storage solutions enables exploring different economic dispatch strategies that reflect the context of different customer segments and the relationship between different energy loads and tariffs, thus creating a scenario where the optimized dispatch may provide additional information and value against the standardized dispatch strategies currently being employed in conventional methods to assess the impact of DER penetration.</p>
+
+    <h3>DER scenario 3 – PV, storage, and CHP</h3>
+    <p>While PV and storage solutions may prove cost effective both at the residential and commercial building sectors, it is more likely that conventional generators and CHP systems will only play a significant role for larger commercial and industrial loads, particularly in the presence of heat loads where CHP systems may become very cost-effective. To accommodate such cases, a third DER investment option was considered where both conventional generators (internal combustion engines and microturbines) and CHP units will be contemplated in the set of possible DER investments.</p>
+
+    <h3>DER scenario 4 – Net-metered PV, storage, and CHP</h3>
+      <p> One of the key influencing factors of behind-the-meter DER impacts on distribution networks is the backfeed that PV installations introduce when exporting power back to the distribution utility. This is typically done under a feed-in or net-metering mechanism, which enable all PV generation to be effectively compensated at a rate equal to the electricity purchase price. Net-metering and other export compensation mechanisms can significantly influence the cost effectiveness of storage solutions, and to study this effect a fourth DER investment scenario is considered building upon scenario 3, where PV exports are enabled under net-metering agreements.</p>
+
+    <h3>DER scenario 5 – PV, subsidized storage, and CHP</h3>
+      <p> One of the key challenges of renewable generation is tied to the intermittency of the solar (and wind) resource, and the steep ramping phenomena occurring in later hours of the day as the sun is setting. Storage systems are a natural solution to address these issues, as they provide the buffer needed to both absorb intermittency and shift load throughout the day. However, high investment costs are still one of the main barriers to their widespread deployment. In the fifth DER investment scenario we analyze a potential subsidy to storage deployment.</p>
+
+
   </div>
+
 
 {% endblock %}
 

@@ -10,12 +10,18 @@
 
 var lineData
 var nodeData
-d3.csv('/static/MapApp/data/transmission/'+scenario_name+'_lines.csv', function (data) {
+
+document.getElementById('ScenarioSelector').onchange = function(e) {
+    scenario_name_ts=e.target.value
+    localStorage.setItem("scenario_name_ts", e.target.value);
+};
+
+d3.csv('/static/MapApp/data/transmission/'+scenario_name_ts+'_lines.csv', function (data) {
   lineData=data
 
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
 //   heatmapData=datum
-d3.csv('/static/MapApp/data/transmission/'+scenario_name+'.csv', function (data) {
+d3.csv('/static/MapApp/data/transmission/'+scenario_name_ts+'.csv', function (data) {
     // Since its a csv file we need to format the data a bit.
     //var dateFormat = d3.time.format('%m/%d/%Y');
     // data.forEach(function (d) {

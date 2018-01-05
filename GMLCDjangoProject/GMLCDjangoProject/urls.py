@@ -23,11 +23,9 @@ urlpatterns = [
     #url(r'^$', views.map, name='map'),
 
     ## Core Visualizations
-    url(r'^map/(?P<simulation_name>[a-zA-Z0-9_]+)/$', views.map, name='map'),
-    url(r'^visualization/(?P<scenario_name>[a-zA-Z0-9_]+)/$', views.scenario, name='scenario'),
-    url(r'^transmission/(?P<scenario_name>[a-zA-Z0-9_]+)/$', views.transmission),
+    url(r'^distribution/$', views.distribution),
+    url(r'^transmission/$', views.transmission),
     url(r'^comparison/$', views.comparison),
-    #url(r'^visualization/$', views.visualization, name='visualization'),
     url(r'^about/$', views.about, name='about'),
 
 

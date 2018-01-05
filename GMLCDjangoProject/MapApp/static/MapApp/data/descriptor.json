@@ -1,0 +1,95 @@
+{"distribution": [
+  {
+  "name": "PGE",
+  "value": "pge",
+  "scenarios":[
+  {
+    "value": "scenario0",
+    "name": "Scenario 0"
+  },
+  {
+    "value": "scenario1",
+    "name": "Scenario 1"
+  },
+  {
+    "value": "scenario2",
+    "name": "Scenario 2"
+  },
+  {
+    "value": "scenario3",
+    "name": "Scenario 3"
+  },
+  {
+    "value": "pgescenario4",
+    "name": "PGEScenario 4"
+  }
+]
+},
+{
+"name": "SCE",
+"value": "sce",
+"scenarios":[
+{
+  "value": "scenario0",
+  "name": "Scenario 0"
+},
+{
+  "value": "scenario1",
+  "name": "Scenario 1"
+},
+{
+  "value": "scenario2",
+  "name": "Scenario 2"
+},
+{
+  "value": "scenario3",
+  "name": "Scenario 3"
+}
+]
+},
+{
+"name": "SDGE",
+"value": "sdge",
+"scenarios":[
+{
+  "value": "scenario0",
+  "name": "Scenario 0"
+},
+{
+  "value": "scenario1",
+  "name": "Scenario 1"
+},
+{
+  "value": "scenario2",
+  "name": "Scenario 2"
+},
+{
+  "value": "scenario3",
+  "name": "Scenario 3"
+}
+]
+}
+],
+"transmission": [
+{
+"scenarios":[
+  {
+    "value": "scenario0",
+    "name": "Scenario 0"
+  },
+  {
+    "value": "scenario1",
+    "name": "Scenario 1"
+  },
+  {
+    "value": "scenario2",
+    "name": "TRScenario 2"
+  },
+  {
+    "value": "scenario3",
+    "name": "TRScenario 3"
+  }
+]
+}
+]
+}

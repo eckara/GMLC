@@ -22,23 +22,17 @@ var reactiveFlowLine2 = dc.compositeChart('#reactive-flow-chart2');
 //   heatmapData=datum
 var lineData2
 var nodeData2
-
-document.getElementById('ScenarioSelector1').onchange = function(e) {
-    scenario_name=e.target.value
-    localStorage.setItem("scenario_name", e.target.value);
-};
-
-document.getElementById('ScenarioSelector2').onchange = function(e) {
-  scenario_name2=e.target.value
-  localStorage.setItem("scenario_name2", e.target.value);
-};
+var context_response
+var context_response2
 
 
-d3.csv('/static/MapApp/data/'+scenario_name2+'_lines.csv', function (data) {
+
+d3.csv('/static/MapApp/data/'+region_name2+"/"+scenario_name2+'_lines.csv', function (error, data) {
   lineData2=data
+
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
 //   heatmapData=datum
-d3.csv('/static/MapApp/data/'+scenario_name2+'.csv', function (data) {
+d3.csv('/static/MapApp/data/'+region_name2+"/"+scenario_name2+'.csv', function (error, data) {
     // Since its a csv file we need to format the data a bit.
     //var dateFormat = d3.time.format('%m/%d/%Y');
     // data.forEach(function (d) {
@@ -432,12 +426,15 @@ function nonzero_min(chart) {
 
 var lineData
 var nodeData
-d3.csv('/static/MapApp/data/'+scenario_name+'_lines.csv', function (data) {
-
+d3.csv('/static/MapApp/data/'+region_name+"/"+scenario_name+'_lines.csv', function (data) {
+  context_response="Succesfull"
+  if (error) {
+    context_response="No such scenario. Please verify."
+  }
   lineData=data
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
 //   heatmapData=datum
-d3.csv('/static/MapApp/data/'+scenario_name+'.csv', function (data) {
+d3.csv('/static/MapApp/data/'+region_name+"/"+scenario_name+'.csv', function (data) {
     // Since its a csv file we need to format the data a bit.
     //var dateFormat = d3.time.format('%m/%d/%Y');
     // data.forEach(function (d) {
@@ -795,31 +792,30 @@ function nonzero_min(chart) {
   });
   return chart;
 };
-
 dc.renderAll();
 
 
 
 
-
-
-
-
 //---- Data and API
-var loadApiEndpoint = "/static/MapApp/data/cache/load.json",
-    nodeApiEndpoint = "/static/MapApp/data/cache/node.json",
-    transmissionApiEndpoint = "/static/MapApp/data/cache/transmission.json",
-    lineApiEndpoint = "/static/MapApp/data/model2.geo.json",
-    substationApiEndpoint = "/static/MapApp/data/cache/substations.json";
+var loadApiEndpoint = "/static/MapApp/data/"+region_name+"/endpoints/load.json",
+    nodeApiEndpoint = "/static/MapApp/data/"+region_name+"/endpoints/node.json",
+    transmissionApiEndpoint = "/static/MapApp/data/data/transmission/endpoints/transmission.json",
+    lineApiEndpoint = "/static/MapApp/data/"+region_name+"/endpoints/model.geo.json",
+    substationApiEndpoint = "/static/MapApp/"+region_name+"/endpoints/substations.json",
+
+    loadApiEndpoint2 = "/static/MapApp/data/"+region_name2+"/endpoints/load.json",
+    nodeApiEndpoint2 = "/static/MapApp/data/"+region_name2+"/endpoints/node.json",
+    lineApiEndpoint2 = "/static/MapApp/data/"+region_name2+"/endpoints/model.geo.json",
+    transmissionApiEndpoint2 = "/static/MapApp/data/data/transmission/endpoints/transmission.json",
+    substationApiEndpoint2 = "/static/MapApp/"+region_name2+"/endpoints/substations.json";
+
+
+
 var sensor_list = [];
 
 var ignoreList = ["sw61to6101", "node_6101", "line60to61", "node_610", "node_61"];
 
-// var meterApiEndpoint = "/vader/api/"+$simulationName+"/meter/\*",
-//     switchApiEndpoint = "/vader/api/"+$simulationName+"/switch/\*",
-//     loadApiEndpoint = "/vader/api/"+$simulationName+"/load/\*",
-//     nodeApiEndpoint = "/vader/api/"+$simulationName+"/node/\*",
-//     feederApiEndpoint = "/vader/api/"+$simulationName+"/feeder/\*";
 
 //---- Styles
 var myStyle = {
@@ -919,7 +915,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.streets'
 });
 
-
+Mapbox_Theme.on("load",function() {$('#loading').hide()});
 // var Thunderforest_TransportDark = L.tileLayer('http://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey={apikey}', {
 // 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 // 	maxZoom: 19,
@@ -930,10 +926,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 // 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 // 	apikey: '7eaba955146e49abba3989008a4d373d'
 // });
-
-
-
-
 
 
 // Theme Layers
@@ -976,6 +968,31 @@ var overlayLayers2 = {
 };
 
 //##################### Maps #####################
+var maps = [];
+var center = [35.38781, -118.99631];
+var center2=[35.38781, -118.99631];
+
+if (region_name=="pge") {
+  center = [35.38781, -118.99631];
+}
+if (region_name=="sce") {
+  center = [33.7139053,-117.8492931];
+}
+if (region_name=="sdge") {
+  center = [32.6734276,-117.0565104];
+}
+
+if (region_name2=="pge") {
+  center2 = [35.38781, -118.99631];
+}
+if (region_name2=="sce") {
+  center2 = [33.7139053,-117.8492931];
+}
+if (region_name2=="sdge") {
+  center2 = [32.6734276,-117.0565104];
+}
+
+
 
 
 var map1 = L.map('map1', {
@@ -998,13 +1015,15 @@ var map2 = L.map('map2', {
       overlayLayers2["Substations"],
       overlayLayers2["Lines"]
       ],
-      center: center,
+      center: center2,
       zoom: zoom
   });
 
+
+
 // Add each map to the map array. This will be useful for scalable calling later
-maps.push({"map":map1, "base":baseLayers1, "overlay":overlayLayers1, "popup":L.popup(), });
-maps.push({"map":map2, "base":baseLayers2, "overlay":overlayLayers2, "popup":L.popup(), });
+maps.push({"map":map1, "base":baseLayers1, "overlay":overlayLayers1, "popup":L.popup(),"loadApiEndpoint":loadApiEndpoint,"nodeApiEndpoint":nodeApiEndpoint,"transmissionApiEndpoint":transmissionApiEndpoint,"lineApiEndpoint":lineApiEndpoint,"substationApiEndpoint":substationApiEndpoint });
+maps.push({"map":map2, "base":baseLayers2, "overlay":overlayLayers2, "popup":L.popup(),"loadApiEndpoint":loadApiEndpoint2,"nodeApiEndpoint":nodeApiEndpoint2,"transmissionApiEndpoint":transmissionApiEndpoint2,"lineApiEndpoint":lineApiEndpoint2,"substationApiEndpoint":substationApiEndpoint2 });
 // maps.push(map3);
 // map1.sync(map2);
 // map2.sync(map1);
@@ -1154,11 +1173,11 @@ function populateLayerLines(endpoint, layerGroup, priority=0) {
 
 maps.forEach(function(map_obj){
     // Add each of the desired layers
-    populateLayer(nodeApiEndpoint, (map_obj.overlay["Nodes"]), nodeIcon, "node");
-    populateLayer(loadApiEndpoint, (map_obj.overlay["Loads"]), loadIcon, "load");
-    populateLayer(transmissionApiEndpoint, (map_obj.overlay["Transmission"]), transmissionIcon, "transmission");
-    populateLayerSubstation(substationApiEndpoint, (map_obj.overlay["Substations"]), substationIcon, "substation");
-    populateLayerLines(lineApiEndpoint,(map_obj.overlay["Lines"]), priority=0);
+    populateLayer(map_obj.nodeApiEndpoint, (map_obj.overlay["Nodes"]), nodeIcon, "node");
+    populateLayer(map_obj.loadApiEndpoint, (map_obj.overlay["Loads"]), loadIcon, "load");
+    populateLayer(map_obj.transmissionApiEndpoint, (map_obj.overlay["Transmission"]), transmissionIcon, "transmission");
+    populateLayerSubstation(map_obj.substationApiEndpoint, (map_obj.overlay["Substations"]), substationIcon, "substation");
+    populateLayerLines(map_obj.lineApiEndpoint,(map_obj.overlay["Lines"]), priority=0);
 });
 
 maps.forEach(function(map_obj){
@@ -1169,4 +1188,12 @@ maps.forEach(function(map_obj){
 });
 
 });
-});
+})
+.on("progress", function(event){
+        //update progress bar
+        if (d3.event.lengthComputable) {
+          var percentComplete = Math.round(d3.event.loaded * 100 / d3.event.total);
+          console.log(percentComplete);
+       }
+    }
+);

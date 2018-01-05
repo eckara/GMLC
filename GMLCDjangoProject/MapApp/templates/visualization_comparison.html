@@ -13,6 +13,10 @@
 <style type="text/css">
     #map1 { width: 100%; height: 50%; float: center;  margin-top: 1%; padding: 0px;}
     #map2 { width: 100%; height: 50%; float: center;  margin-top: 1%; padding: 0px;}
+    #tab {margin-bottom:3%;}
+    #loading {
+        position: absolute; width: 100%; height: 100%; background: url("{% static 'MapApp/images/ajax-loader.gif' %}") no-repeat center center;
+    }
     /*.map { width: 100%; height: 90%; float: center; margin-right: 1%;}*/
     /*.padbypass { width: 100%; margin-top: 20px;}*/
 </style>
@@ -21,12 +25,37 @@
 </div> -->
 <div class="row">
    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-     <select id="ScenarioSelector1">
-       <option value="Scenario0" selected= "selected">Base</option>
-       <option value="Scenario1">Scenario 1</option>
-       <option value="Scenario2">Scenario 2</option>
-       <option value="Scenario3">Scenario 3</option>
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+     <div container id="tab">
+     <select id="RegionSelector">
      </select>
+     <select id="ScenarioSelector">
+     </select>
+   </div>
+ </div>
+
+ </div>
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+  <div container id="tab">
+    <select id="RegionSelector2"></select>
+   <select id="ScenarioSelector2"></select>
+   <input type="button" value="Compare" onClick="window.location.reload()">
+ </div>
+</div>
+</div>
+
+</div>
+
+<div class="row">
+   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+    <div  id="map1"></div>
+     <strong id="map_sub_title"></strong>
+     <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
+     <div class="clearfix"></div>
      <select id="MonthSelector1">
          <option value='janaury' selected= "selected">January</option>
          <option value='february'>February</option>
@@ -45,21 +74,15 @@
        <option value="weekday" selected= "selected">Weekday</option>
        <option value="weekend">Weekend</option>
      </select>
+   </div>
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+     <div  id="map2"></div>
      <strong id="map_sub_title"></strong>
      <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
      <div class="clearfix"></div>
-     <div  id="map1"></div>
-
-
-   </div>
-
-   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-     <select id="ScenarioSelector2">
-       <option value="Scenario0">Base</option>
-       <option value="Scenario1">Scenario 1</option>
-       <option value="Scenario2">Scenario 2</option>
-       <option value="Scenario3">Scenario 3</option>
-     </select>
      <select id="MonthSelector2">
          <option value='january'>January</option>
          <option value='february'>February</option>
@@ -78,69 +101,80 @@
        <option value="weekday" selected= "selected">Weekday</option>
        <option value="weekend">Weekend</option>
      </select>
-     <input type="button" value="Compare" onClick="window.location.reload()">
-
-     <strong id="map_sub_title"></strong>
-     <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
-     <div class="clearfix"></div>
-   <div  id="map2"></div>
-
-
- </div>
+    </div>
+  </div>
 </div>
 
 <!--Voltage Magnitude Labels -->
 <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="voltage-magnitute-chart">
-   <strong>Voltage Magnitude</strong>
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="voltage-magnitute-chart">
+    <strong>Voltage Magnitude</strong>
+    </div>
   </div>
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="voltage-magnitute-chart2">
-   <strong>Voltage Magnitude</strong>
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="voltage-magnitute-chart2">
+      <strong>Voltage Magnitude</strong>
+    </div>
   </div>
 
 </div>
 
+<div id="loading"></div>
+
 <!-- Hourly Utility Chart -->
 <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="hourly-utility-chart">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="hourly-utility-chart">
                <strong>Utility Purchase & On-site Generation</strong>
                <a class="reset" href="javascript:hourlyUtilityPurchaseLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
                <div class="clearfix"></div>
+        </div>
   </div>
- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="hourly-utility-chart2">
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="hourly-utility-chart2">
               <strong>Utility Purchase & On-site Generation</strong>
               <a class="reset" href="javascript:hourlyUtilityPurchaseLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
               <div class="clearfix"></div>
+    </div>
  </div>
 
 </div>
 
 <!-- Active Power Flow chart -->
 <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="power-flow-chart">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" >
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="power-flow-chart">
              <strong>Active Power Flows</strong>
              <a class="reset" href="javascript:powerFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
              <div class="clearfix"></div>
+      </div>
   </div>
- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="power-flow-chart2">
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="power-flow-chart2">
             <strong>Active Power Flows</strong>
             <a class="reset" href="javascript:powerFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
             <div class="clearfix"></div>
+      </div>
  </div>
 
 </div>
 
 <!-- Reactive Power Flow chart -->
 <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-flow-chart">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="reactive-flow-chart">
              <strong>Reactive Power Flows</strong>
              <a class="reset" href="javascript:reactiveFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
              <div class="clearfix"></div>
+      </div>
   </div>
- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6" id="reactive-flow-chart2">
+ <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="reactive-flow-chart2">
             <strong>Reactive Power Flows</strong>
             <a class="reset" href="javascript:reactiveFlowLine.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
             <div class="clearfix"></div>
+        </div>
  </div>
 </div>
 
@@ -148,16 +182,145 @@
 
 {% block script %}
 <script>
-scenario_name=localStorage.getItem("scenario_name")
-scenario_name2=localStorage.getItem("scenario_name2")
-if (scenario_name2 === null){scenario_name2='Scenario1'};
-if (scenario_name === null){scenario_name='Scenario0'};
-$("#ScenarioSelector1").val(scenario_name).change();
-$("#ScenarioSelector2").val(scenario_name2).change();
+var region_name
+var scenario_name
+var region_name2
+var scenario_name2
 
-console.log(scenario_name)
-console.log( scenario_name2)
+
+$("#ScenarioSelector2").change(function () {
+  console.log("scenario_selector2_trigger")
+  var snd = $(this).val();
+  localStorage.setItem("scenario_name2", snd);
+  });
+
+// Update scenario selector
+$("#RegionSelector2").change(function () {
+  console.log("region_selector2_trigger!")
+  var region = $(this).val();
+  localStorage.setItem("region_name2", region);
+  var $select = $('#ScenarioSelector');
+  //request the JSON data and parse into the select element
+  $.getJSON("{% static 'MapApp/data/descriptor.json' %}", function(data){
+    //clear the current content of the select
+    $select.html('');
+    //iterate over the data and append a select option
+    $.each(data.distribution, function(key, val){
+      if (val.value==region){
+        $.each(val.scenarios, function(key, scenario){
+      $select.append('<option value="' + scenario.value + '">' + scenario.name + '</option>');
+    })
+  }
+});
+var options = $('#ScenarioSelector2').find('option')
+$('#ScenarioSelector2').val(options[0].value).change();
+});
+});
+
+
+
+$("#ScenarioSelector").change(function () {
+  console.log("scenario_selector_trigger")
+  var snd = $(this).val();
+  localStorage.setItem("scenario_name", snd);
+  });
+
+// Update scenario selector
+$("#RegionSelector").change(function () {
+  console.log("region_selector_trigger!")
+  var region = $(this).val();
+  localStorage.setItem("region_name", region);
+  var $select = $('#ScenarioSelector');
+  //request the JSON data and parse into the select element
+  $.getJSON("{% static 'MapApp/data/descriptor.json' %}", function(data){
+    //clear the current content of the select
+    $select.html('');
+    //iterate over the data and append a select option
+    $.each(data.distribution, function(key, val){
+      if (val.value==region){
+        $.each(val.scenarios, function(key, scenario){
+      $select.append('<option value="' + scenario.value + '">' + scenario.name + '</option>');
+    })
+  }
+});
+var options = $('#ScenarioSelector').find('option')
+$('#ScenarioSelector').val(options[0].value).change();
+});
+});
+
+
+//request the JSON data and parse into the select element
+$.getJSON("{% static 'MapApp/data/descriptor.json' %}", function(data){
+  //clear the current content of the select
+  $('#RegionSelector').html('');
+  $('#RegionSelector2').html('');
+
+  //iterate over the data and append a select option
+  $.each(data.distribution, function(key, val){
+    $('#RegionSelector').append('<option value="' + val.value + '">' + val.name + '</option>');
+    $('#RegionSelector2').append('<option value="' + val.value + '">' + val.name + '</option>');
+  })
+  // select the previously queried value
+  region_name=localStorage.getItem("region_name")
+  if (region_name === null){region_name='pge'};
+  $('#RegionSelector').val(region_name).change();
+
+  region_name2=localStorage.getItem("region_name2")
+  if (region_name2 === null){region_name2='sce'};
+  $('#RegionSelector2').val(region_name2).change();
+
+  $('#ScenarioSelector').html('');
+  $('#ScenarioSelector2').html('');
+  //iterate over the data and append a select option
+  $.each(data.distribution, function(key, val){
+    if (val.value==region_name){
+      $.each(val.scenarios, function(key, scenario){
+    $('#ScenarioSelector').append('<option value="' + scenario.value + '">' + scenario.name + '</option>');})
+  }
+  if (val.value==region_name2){
+    $.each(val.scenarios, function(key, scenario){
+  $('#ScenarioSelector2').append('<option value="' + scenario.value + '">' + scenario.name + '</option>');})
+  }
+});
+scenario_name=localStorage.getItem("scenario_name")
+var options = $('#ScenarioSelector').find('option')
+var step
+var check=false
+var scenario_list=[]
+for (step = 0; step < options.length; step++) {
+  if (scenario_name==options[step].value){check=true};
+}
+// if the saved scenario not in current
+if (!check){
+var options = $('#ScenarioSelector').find('option')
+scenario_name=options[0].value
+}
+$('#ScenarioSelector').val(scenario_name).change();
+
+
+scenario_name2=localStorage.getItem("scenario_name2")
+var options = $('#ScenarioSelector2').find('option')
+var step
+var check=false
+var scenario_list=[]
+for (step = 0; step < options.length; step++) {
+  if (scenario_name2==options[step].value){check=true};
+}
+// if the saved scenario not in current
+if (!check){
+var options = $('#ScenarioSelector2').find('option')
+scenario_name2=options[0].value
+}
+$('#ScenarioSelector2').val(scenario_name2).change();
+
+$.getScript("{% static 'MapApp/js/dualmap.js' %}")
+});
+
+// $('#tab').DataTable().ajax.reload()
+// $('#tab2').DataTable().ajax.reload()
+
 <!-- jQuery Sparklines -->
+
 function clearResultsTag() {
   nodeChart.filterAll();
   dc.redrawAll();
@@ -174,6 +337,10 @@ $('#ScenarioSelector1').change(function() {
     var text = $option.text();//to get <option>Text</option> content
 });
 */
+// $(window).ready(function() {
+//     $('#loading').hide();
+// });
+
 
 </script>
 
@@ -186,8 +353,7 @@ $('#ScenarioSelector1').change(function() {
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/dc.js' %}"></script>
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/colorbrewer.js' %}"></script>
 <script type="text/javascript" src="{% static 'MapApp/js/libraries/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'MapApp/js/dualmap.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'MapApp/js/dualmap.js' %}"></script> -->
 <!--script type="text/javascript" src="{% static 'MapApp/js/dc-resizing.js' %}"></script-->
-
 
 {% endblock %}

@@ -1664,10 +1664,10 @@ dc.baseMixin = function (_chart) {
     };
 
     function checkForMandatoryAttributes (a) {
-        if (!_chart[a] || !_chart[a]()) {
-            throw new dc.errors.InvalidStateException('Mandatory attribute chart.' + a +
-                ' is missing on chart[#' + _chart.anchorName() + ']');
-        }
+        // if (!_chart[a] || !_chart[a]()) {
+        //     throw new dc.errors.InvalidStateException('Mandatory attribute chart.' + a +
+        //         ' is missing on chart[#' + _chart.anchorName() + ']');
+        // }
     }
 
     /**

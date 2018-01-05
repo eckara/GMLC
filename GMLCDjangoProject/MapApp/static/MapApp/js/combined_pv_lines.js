@@ -20,20 +20,28 @@ var daytypeDimension=[]
 
 var nodeChart = dc.pieChart('#bar');
 
-function select(category) {
-    render(data, category);
-
-}
-
+// document.getElementById('ScenarioSelector').onchange = function(e) {
+//     scenario_name_ds=e.target.value
+//     if (scenario_name_ds != ''){
+//     localStorage.setItem("scenario_name_ds", e.target.value);}
+// };
+//
+// document.getElementById('RegionSelector').onchange = function(e) {
+//     region_name_ds=e.target.value
+//     localStorage.setItem("region_name_ds", e.target.value);
+// };
 
 // var heatmapData
 var lineData
 var nodeData
-d3.csv('/static/MapApp/data/'+scenario_name+'_lines.csv', function (data) {
+
+
+
+d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'_lines.csv', function (data) {
   lineData=data
 // d3.json("/static/MapApp/data/heatmap_data.json", function(error, datum) {
 //   heatmapData=datum
-d3.csv('/static/MapApp/data/'+scenario_name+'.csv', function (data) {
+d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', function (data) {
     // Since its a csv file we need to format the data a bit.
     //var dateFormat = d3.time.format('%m/%d/%Y');
     // data.forEach(function (d) {
@@ -511,14 +519,25 @@ dc.renderAll();
 //---- Map Constants
 var maps = [];
 var center = [35.38781, -118.99631];
+
+if (region_name_ds=="pge") {
+  center = [35.38781, -118.99631];
+}
+if (region_name_ds=="sce") {
+  center = [33.7139053,-117.8492931];
+}
+if (region_name_ds=="sdge") {
+  center = [32.6734276,-117.0565104];
+}
+
 var zoom = 15.5;
 
 //---- Data and API
-var loadApiEndpoint = "/static/MapApp/data/cache/load.json",
-    nodeApiEndpoint = "/static/MapApp/data/cache/node.json",
-    transmissionApiEndpoint = "/static/MapApp/data/cache/transmission.json",
-    lineApiEndpoint = "/static/MapApp/data/model2.geo.json",
-    substationApiEndpoint = "/static/MapApp/data/cache/substations.json";
+var loadApiEndpoint = "/static/MapApp/data/"+region_name_ds+"/endpoints/load.json",
+    nodeApiEndpoint = "/static/MapApp/data/"+region_name_ds+"/endpoints/node.json",
+    transmissionApiEndpoint = "/static/MapApp/data/transmission/endpoints/transmission.json",
+    lineApiEndpoint = "/static/MapApp/data/"+region_name_ds+"/endpoints/model.geo.json",
+    substationApiEndpoint = "/static/MapApp/data/"+region_name_ds+"/endpoints/substations.json";
 
 
 var ignoreList = ["sw61to6101", "node_6101", "line60to61", "node_610", "node_61"];
@@ -606,6 +625,7 @@ var Mapbox_Theme = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}
         'Imagery © <a href="http://mapbox.com">Mapbox</a>',
     id: 'mapbox.streets'
 });
+Mapbox_Theme.on("load",function() {$('#loading').hide()});
 
 
 var Esri_WorldStreetMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {

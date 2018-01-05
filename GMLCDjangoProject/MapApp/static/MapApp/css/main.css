@@ -9,13 +9,7 @@ body{
 .top5 { margin-top:50px; }
 .bottom5 { margin-bottom:55px; }
 
-#hourly-utility-chart{
-  padding: 2%
-}
 
-#hourly-utility-chart2{
-  padding: 2%
-}
 
 #loading {
    width: 100%;
@@ -36,24 +30,58 @@ body{
   left: 240px;
   z-index: 100;
 }
+#voltage-angle-chart{
+  padding: 2%;
+}
+#hourly-utility-chart{
+  padding: 2%;
+}
 
+#hourly-utility-chart2{
+  padding: 2%;
+
+}
+#reactive-flow-chart{
+  padding: 2%;
+
+}
+
+#reactive-flow-chart2{
+  padding: 2%;
+
+}
+#power-flow-chart{
+  padding: 2%;
+
+}
+
+#power-flow-chart2{
+  padding: 2%;
+
+}
 #voltage-magnitute-chart{
   padding: 2%;
+
 }
 
 #voltage-magnitute-chart2{
   padding: 2%;
+
 }
 
 #type-value-chart{
   padding: 2%;
+
 }
 #month-value-chart{
-  padding: 2%
+  padding: 2%;
+
 }
+
 #chart-titles{
   padding: 2%
 }
+
 topnavbar {
     margin: 0;
 }
