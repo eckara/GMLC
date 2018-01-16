@@ -7,6 +7,59 @@
 // filtered by other page controls.
 //var fluctuationChart = dc.barChart('#fluctuation-chart');
 
+var filteredLineList=[]
+var filteredList=[]
+
+var normalIconSize = 20,
+    bigIconSize = 30,
+    megaIconSize = 60;
+var normalIconDimens = [normalIconSize, normalIconSize],
+    normalIconAnchor = [normalIconSize/2, normalIconSize/2],
+    normalIconPopup  = [0, -normalIconSize/2 + 3];
+var bigIconDimens = [bigIconSize, bigIconSize],
+    bigIconAnchor = [bigIconSize/2, bigIconSize/2],
+    bigIconPopup  = [0, -bigIconSize/2 + 3];
+var megaIconDimens = [megaIconSize, megaIconSize],
+    megaIconAnchor = [megaIconSize/2, megaIconSize/2],
+    megaIconPopup  = [0, -megaIconSize/2 + 3];
+
+
+var NormalGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/meter.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     normalIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   normalIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  normalIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+var BigGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/switch.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     bigIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   bigIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  bigIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+var MegaGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/substation.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     megaIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   megaIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  megaIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+
+var transmissionIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/transformer.png'})
+var selected = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/node_selected.png'})
 
 var lineData
 var nodeData
@@ -138,6 +191,35 @@ var reactivePowerLine = dc.compositeChart('#reactive-power-chart');
 
 var powerFlowLine = dc.compositeChart('#power-flow-chart');
 var reactiveFlowLine = dc.compositeChart('#reactive-flow-chart');
+var lineChart = dc.pieChart('#bar2');
+var nodeChart = dc.pieChart('#bar2');
+
+
+nodeChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+// (_optional_) define chart width, `default = 200`
+  //  .width(225)
+// (optional) define chart height, `default = 200`
+  //  .height(225)
+// Define pie radius
+    .innerRadius(70)
+//      .externalRadius(110)
+// Set dimension
+    .dimension(nodeDimension)
+// Set group
+    .group(avgActivePowerGroup)
+
+lineChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+// (_optional_) define chart width, `default = 200`
+  //  .width(225)
+// (optional) define chart height, `default = 200`
+  //  .height(225)
+// Define pie radius
+    .innerRadius(70)
+//      .externalRadius(110)
+// Set dimension
+    .dimension(lineDimension)
+// Set group
+    .group(avgReactivePowerGroup)
 
 
 voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
@@ -168,6 +250,8 @@ voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
       .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
       .on('renderlet', function(chart) {
           chart.selectAll('circle.dot')
+          chart.selectAll('g.y text')
+            .attr('transform', 'translate(-5,-7) rotate(315)')
               // .on('mouseover.foo', function(d) {
               //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
               //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -177,7 +261,7 @@ voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                   //console.log('out')
               });
       });
-      voltageMagnitudeLine.yAxis().tickFormat(d3.format('.2f'))
+      voltageMagnitudeLine.yAxis().tickFormat(d3.format('.0f'))
       voltageMagnitudeLine.yAxis().ticks(3)
 activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           //.renderArea(true)
@@ -207,6 +291,8 @@ activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
               chart.selectAll('circle.dot')
+              chart.selectAll('g.y text')
+                .attr('transform', 'translate(-5,-7) rotate(315)')
                   // .on('mouseover.foo', function(d) {
                   //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                   //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -216,7 +302,7 @@ activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                       //console.log('out')
                   });
           });
-          activePowerLine.yAxis().tickFormat(d3.format('.2f'))
+          activePowerLine.yAxis().tickFormat(d3.format('.0f'))
           activePowerLine.yAxis().ticks(3)
        /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           //.renderArea(true)
@@ -250,6 +336,8 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                     .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
                     .on('renderlet', function(chart) {
                         chart.selectAll('circle.dot')
+                        chart.selectAll('g.y text')
+                          .attr('transform', 'translate(-5,-7) rotate(315)')
                             // .on('mouseover.foo', function(d) {
                             //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                             //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -259,7 +347,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                                 //console.log('out')
                             });
                     });
-                    reactivePowerLine.yAxis().tickFormat(d3.format('.2f'))
+                    reactivePowerLine.yAxis().tickFormat(d3.format('.0f'))
                     reactivePowerLine.yAxis().ticks(3)
                  /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                     //.renderArea(true)
@@ -293,6 +381,8 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
                   chart.selectAll('circle.dot')
+                  chart.selectAll('g.y text')
+                    .attr('transform', 'translate(-5,-7) rotate(315)')
                       // .on('mouseover.foo', function(d) {
                       //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                       //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -302,7 +392,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                           //console.log('out')
                       });
               });
-              voltageAngleLine.yAxis().tickFormat(d3.format('.2f'))
+              voltageAngleLine.yAxis().tickFormat(d3.format('.0f'))
               voltageAngleLine.yAxis().ticks(3)
            /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               //.renderArea(true)
@@ -346,6 +436,8 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
               chart.selectAll('circle.dot')
+              chart.selectAll('g.y text')
+                .attr('transform', 'translate(-5,-7) rotate(315)')
                   // .on('mouseover.foo', function(d) {
                   //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                   //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -355,7 +447,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                       //console.log('out')
                   });
           });
-          powerFlowLine.yAxis().tickFormat(d3.format('.2f'))
+          powerFlowLine.yAxis().tickFormat(d3.format('.0f'))
           powerFlowLine.yAxis().ticks(3)
 
    reactiveFlowLine
@@ -395,6 +487,8 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
                   chart.selectAll('circle.dot')
+                  chart.selectAll('g.y text')
+                    .attr('transform', 'translate(-5,-7) rotate(315)')
                       // .on('mouseover.foo', function(d) {
                       //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                       //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -404,7 +498,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                           //console.log('out')
                       });
               });
-              reactiveFlowLine.yAxis().tickFormat(d3.format('.2f'))
+              reactiveFlowLine.yAxis().tickFormat(d3.format('.0f'))
               reactiveFlowLine.yAxis().ticks(3)
 
       // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
@@ -430,7 +524,7 @@ console.log('here')
 //---- Map Constants
 var maps = [];
 var center = [36.18781, -118.99631];
-var zoom = 6.5;
+var zoom = 5.5;
 
 //---- Data and API
 var transmissionApiEndpoint = "/static/MapApp/data/transmission/endpoints/transmission.json",
@@ -454,55 +548,6 @@ var geojsonMarkerOptions = {
     fillOpacity: 0.8
 };
 
-var normalIconSize = 20,
-    bigIconSize = 30,
-    megaIconSize = 60;
-var normalIconDimens = [normalIconSize, normalIconSize],
-    normalIconAnchor = [normalIconSize/2, normalIconSize/2],
-    normalIconPopup  = [0, -normalIconSize/2 + 3];
-var bigIconDimens = [bigIconSize, bigIconSize],
-    bigIconAnchor = [bigIconSize/2, bigIconSize/2],
-    bigIconPopup  = [0, -bigIconSize/2 + 3];
-var megaIconDimens = [megaIconSize, megaIconSize],
-    megaIconAnchor = [megaIconSize/2, megaIconSize/2],
-    megaIconPopup  = [0, -megaIconSize/2 + 3];
-
-
-var NormalGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/meter.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     normalIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   normalIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  normalIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-var BigGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/switch.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     bigIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   bigIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  bigIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-var MegaGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/substation.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     megaIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   megaIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  megaIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-
-var transmissionIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/transformer.png'})
     //houseIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/house.png'}),
 
 
@@ -593,13 +638,27 @@ function populateLayer(endpoint, layerGroup, iconPath, element_type, priority=0)
           alt:JSON.stringify({"type":element_type,"name":element['name']})
         })
         marker.bindPopup( element['name']);
-        marker.on('click', function(e) {nodeDimension.filter(e.target.options.name)
-        dc.redrawAll()
-
-        document.getElementById('map_reset').style.display = "";
-        document.getElementById("map_sub_title").innerHTML = "Results for " + e.target.options.name;
-
-      console.log('filtered '+ e.target.options.name)})//.bindPopup(element['name']); //.bindTooltip(element['name']);
+        marker.on('click', function(e) {
+          if (filteredList.includes(e.target.options.name)){
+            filteredList.pop(e.target.options.name)
+            console.log(filteredList)
+            if (filteredList.length<1){
+            nodeChart.filterAll()}
+            else {
+            console.log("Filtering"+ filteredList)
+            nodeChart.filter([filteredList])}
+            dc.redrawAll()
+            e.target.setIcon(transmissionIcon);
+          }
+          else {
+            filteredList.push(e.target.options.name)
+            console.log(filteredList)
+            nodeChart.filter([filteredList])
+            dc.redrawAll()
+            e.target.setIcon(selected);
+          }
+        // document.getElementById('map_reset').style.display = "";
+        console.log('filtered '+ e.target.options.name)})//.bindPopup(element['name']); //.bindTooltip(element['name']);
         if (priority == 1) {
           marker.setZIndexOffset(700);
         }
@@ -613,20 +672,38 @@ function populateLayer(endpoint, layerGroup, iconPath, element_type, priority=0)
   });
 }
 
+function onEachFeature(feature, layer) {
+    // We want to ignore a few elements
+    if (ignoreList.indexOf(feature.properties.name)> -1) {
+      console.log("FOUND Element to Ignore" + feature.properties.name)
+      return;
+    }
 
-  function onEachFeature(feature, layer) {
-      // We want to ignore a few elements
-      if (ignoreList.indexOf(feature.properties.name)> -1) {
-        console.log("FOUND Element to Ignore" + feature.properties.name)
-        return;
+    layer.bindPopup(feature.properties.name);
+    layer.on('click', function(e) {
+      if (filteredLineList.includes(e.target.feature.properties.name)){
+        filteredLineList.pop(e.target.feature.properties.name)
+        console.log(filteredLineList)
+        if (filteredLineList.length<1){
+        lineChart.filterAll()}
+        else {
+        console.log("Filtering"+ filteredList)
+        lineChart.filter([filteredLineList])
+        }
+        e.target.setStyle({color: 'red'});
+        dc.redrawAll()
       }
-      layer.bindPopup(feature.properties.name);
-      layer.on('click', function(e) {lineDimension.filter(feature.properties.name)
-      dc.redrawAll()
-      console.log(feature.properties.name)
-    });
+      else {
+        filteredLineList.push(e.target.feature.properties.name)
+        console.log(filteredLineList)
+        lineChart.filter(filteredLineList)
+        e.target.setStyle({color: 'blue'});
+        dc.redrawAll()
+        console.log(lineDimension)
+      }
+      });
 
-      }
+    }
 
 function populateLayerLines(endpoint, priority=0) {
     $.getJSON( endpoint, function(geo_json_data) {

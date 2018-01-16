@@ -15,10 +15,15 @@ var hourlyUtilityPurchaseLine = dc.lineChart("#hourly-utility-chart");
 var voltageMagnitudeLine = dc.compositeChart('#voltage-magnitute-chart');
 var powerFlowLine = dc.compositeChart('#power-flow-chart');
 var reactiveFlowLine = dc.compositeChart('#reactive-flow-chart');
+var tablet= dc.dataTable('#dc-data-table');
+var tablet2= dc.dataTable('#dc-data-table2');
+
 
 var daytypeDimension=[]
-
 var nodeChart = dc.pieChart('#bar');
+var lineChart = dc.pieChart('#bar2');
+var dayChart=dc.pieChart('#day');
+var linedayChart=dc.pieChart('#lineday');
 
 // document.getElementById('ScenarioSelector').onchange = function(e) {
 //     scenario_name_ds=e.target.value
@@ -30,10 +35,69 @@ var nodeChart = dc.pieChart('#bar');
 //     region_name_ds=e.target.value
 //     localStorage.setItem("region_name_ds", e.target.value);
 // };
-
 // var heatmapData
+var normalIconSize = 20,
+    bigIconSize = 30,
+    megaIconSize = 60;
+var normalIconDimens = [normalIconSize, normalIconSize],
+    normalIconAnchor = [normalIconSize/2, normalIconSize/2],
+    normalIconPopup  = [0, -normalIconSize/2 + 3];
+var bigIconDimens = [bigIconSize, bigIconSize],
+    bigIconAnchor = [bigIconSize/2, bigIconSize/2],
+    bigIconPopup  = [0, -bigIconSize/2 + 3];
+var megaIconDimens = [megaIconSize, megaIconSize],
+    megaIconAnchor = [megaIconSize/2, megaIconSize/2],
+    megaIconPopup  = [0, -megaIconSize/2 + 3];
+
+
+var NormalGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/meter.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     normalIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   normalIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  normalIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+var BigGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/switch.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     bigIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   bigIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  bigIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+var MegaGridIcon = L.Icon.extend({
+    options: {
+      iconUrl: '/static/MapApp/images/icons/substation.png',
+      // shadowUrl: 'leaf-shadow.png',
+      iconSize:     megaIconDimens, // size of the icon
+      // shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   megaIconAnchor, // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  megaIconPopup // point from which the popup should open relative to the iconAnchor
+    }
+});
+
+
 var lineData
 var nodeData
+var maps = []
+var filteredList=[]
+var filteredLineList=[]
+var meterIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/meter.png'})
+var transmissionIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/transformer.png'})
+var nodeIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/node.png'})
+var selected = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/node_selected.png'})
+var loadIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/load.png'})
+    //houseIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/house.png'})
+var switchIcon = new BigGridIcon({iconUrl: '/static/MapApp/images/icons/switch.png'})
+var substationIcon = new MegaGridIcon({iconUrl: '/static/MapApp/images/icons/substation.png'})
 
 
 
@@ -95,6 +159,11 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       return d.month;
   });
 
+  // var installedPVDimension = ldx.dimension(function (d) {
+  //     return d.pv_inst;
+  // });
+
+
   var lineHourDimension = ldx.dimension(function (d) {
       return parseInt(d.hour_of_day);
   });
@@ -155,6 +224,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
              var dummy=parseFloat(v[attr])
               --p.count
               p.sums -= dummy;
+              // p.averages = p.count ? p.sums/p.count : 0;
               p.averages = (p.count === 0) ? 0 : p.sums/p.count;
           }
           return p;
@@ -194,7 +264,9 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
   var avgvoltageCValueGroup = hourDimension.group().reduce(reduceAddAvg('voltage_c_magnitude'), reduceRemoveAvg('voltage_c_magnitude'), reduceInitAvg);
   var avgUtilityByHourGroup = hourDimension.group().reduce(reduceAddAvg('purchase_from_utility'), reduceRemoveAvg('purchase_from_utility'), reduceInitAvg);
   var avgSolarByHourGroup = hourDimension.group().reduce(reduceAddAvg('hourly_pv_self_consumpt'), reduceRemoveAvg('hourly_pv_self_consumpt'), reduceInitAvg);
-
+  var avgBattByHourGroup = hourDimension.group().reduce(reduceAddAvg('elec_provided_by_stationnary_battery_charging_after_eff'), reduceRemoveAvg('elec_provided_by_stationnary_battery_charging_after_eff'), reduceInitAvg);
+  var avgInstalledSolarByType = typeDimension.group().reduce(reduceAddAvg('pv_inst'), reduceRemoveAvg('pv_inst'), reduceInitAvg);
+  var avgInstalledBatByType = typeDimension.group().reduce(reduceAddAvg('storage_inst'), reduceRemoveAvg('storage_inst'), reduceInitAvg);
   monthValuePie /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
   // (_optional_) define chart width, `default = 200`
       //.width(350)
@@ -246,6 +318,89 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
         .dimension(nodeDimension)
     // Set group
         .group(typeGenerationGroup)
+
+    lineChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+    // (_optional_) define chart width, `default = 200`
+      //  .width(225)
+    // (optional) define chart height, `default = 200`
+      //  .height(225)
+    // Define pie radius
+        .innerRadius(70)
+    //      .externalRadius(110)
+    // Set dimension
+        .dimension(lineDimension)
+    // Set group
+        .group(avgPowerFlowAGroup)
+
+    dayChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+    // (_optional_) define chart width, `default = 200`
+      //  .width(225)
+    // (optional) define chart height, `default = 200`
+      //  .height(225)
+    // Define pie radius
+        .innerRadius(70)
+    //      .externalRadius(110)
+    // Set dimension
+        .dimension(daytypeDimension)
+    // Set group
+        .group(typeGenerationGroup)
+
+    linedayChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+    // (_optional_) define chart width, `default = 200`
+      //  .width(225)
+    // (optional) define chart height, `default = 200`
+      //  .height(225)
+    // Define pie radius
+        .innerRadius(70)
+    //      .externalRadius(110)
+    // Set dimension
+        .dimension(lineDayTypeDimension)
+    // Set group
+        .group(avgPowerFlowAGroup)
+
+    rank = function (p) { return "" };
+
+    //
+    tablet
+        .width(768)
+        .height(480)
+        .dimension(avgInstalledSolarByType)
+        .group(rank)
+        .columns([function (d) { return d.key },
+                  function (d) { return Math.round(d.value.averages) }])
+        .sortBy(function (d) { return d.value.averages })
+        .order(d3.descending)
+        //
+    tablet2
+        .width(768)
+        .height(480)
+        .dimension(avgInstalledBatByType)
+        .group(rank)
+        .columns([function (d) { return d.key },
+                  function (d) { return Math.round(d.value.averages) }])
+        .sortBy(function (d) { return d.value.averages })
+        .order(d3.descending)
+    // tablet
+//     .width(600)
+//     .height(225)
+//     .x(d3.scale.linear().domain([0, 23]))
+//     .elasticX(true)
+//     .dimension(typeDimension)
+//     .group(avgInstalledBatByType);
+
+  // tablet /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+  // // (_optional_) define chart width, `default = 200`
+  //     //.width(225)
+  // // (optional) define chart height, `default = 200`
+  //     //.height(225)
+  // // Define pie radius
+  //     //.innerRadius(70)
+  // //      .externalRadius(110)
+  // // Set dimension
+  //     .dimension(typeDimension)
+  // // Set group
+  //     .group(avgInstalledBatByType)
+  //     .legend(dc.legend());
 
   voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
       //.renderArea(true)
@@ -299,6 +454,8 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
       .on('renderlet', function(chart) {
           chart.selectAll('circle.dot')
+          chart.selectAll('g.y text')
+            .attr('transform', 'translate(-5,-7) rotate(315)')
               // .on('mouseover.foo', function(d) {
               //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
               //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -309,7 +466,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               });
       });
       voltageMagnitudeLine.yAxis().tickFormat(d3.format('.2f'))
-      voltageMagnitudeLine.yAxis().ticks(3)
+      voltageMagnitudeLine.yAxis().ticks(5)
 
 
        /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
@@ -365,6 +522,8 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
               chart.selectAll('circle.dot')
+              chart.selectAll('g.y text')
+                .attr('transform', 'translate(-5,-7) rotate(315)')
                   // .on('mouseover.foo', function(d) {
                   //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                   //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -375,7 +534,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                   });
           });
           powerFlowLine.yAxis().tickFormat(d3.format('.2f'))
-          powerFlowLine.yAxis().ticks(3)
+          powerFlowLine.yAxis().ticks(5)
 
           reactiveFlowLine
               .x(d3.scale.linear().domain([0, 23]))
@@ -426,6 +585,8 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
                   chart.selectAll('circle.dot')
+                  chart.selectAll('g.y text')
+                    .attr('transform', 'translate(-5,-7) rotate(315)')
                       // .on('mouseover.foo', function(d) {
                       //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                       //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -436,7 +597,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                       });
               });
               reactiveFlowLine.yAxis().tickFormat(d3.format('.2f'))
-              reactiveFlowLine.yAxis().ticks(3)
+              reactiveFlowLine.yAxis().ticks(5)
 
       // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
       // legend.
@@ -446,7 +607,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           .renderArea(true)
         //  .width(600)
         //  .height(225)
-          .yAxisLabel("Energy,[kWh]",20)
+          .yAxisLabel("Energy,[kWh]",30)
           .xAxisLabel("Hour of Day")
           .transitionDuration(1000)
         //  .margins({top: 30, right: 50, bottom: 25, left: 40})
@@ -457,7 +618,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           .elasticY(true)
           .dashStyle([3,1,1,1])
           .dotRadius([10])
-          .x(d3.scale.linear().domain([0, 24]))
+          .x(d3.scale.linear().domain([0, 23]))
           .renderHorizontalGridLines(true)
       //##### Legend
           // Position the legend relative to the chart origin and specify items' height and separation.
@@ -468,14 +629,19 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           // The `.valueAccessor` will be used for the base layer
           .group(avgUtilityByHourGroup, 'Avg. Utility Purchase')
           .valueAccessor(function (d) {
-                return d.value.averages/1000;
+                return d.value.averages;
             })
           // Stack additional layers with `.stack`. The first paramenter is a new group.
           // The second parameter is the series name. The third is a value accessor.
           .stack(avgSolarByHourGroup, 'Avg. Solar Generation')
           .valueAccessor(function (d) {
-                return d.value.averages/1000;
+                return d.value.averages;
             })
+          .stack(avgBattByHourGroup, 'Avg. from Battery')
+          .valueAccessor(function (d) {
+                  return d.value.averages;
+              })
+
           // Title can be called by any stack layer.
           // .title(function (d) {
           //     var value = d.value.avg ? d.value.avg : d.value;
@@ -485,7 +651,9 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           //     return d.key + '\n' + numberFormat(value);
           // });
           .on('renderlet', function(chart) {
-              chart.selectAll('circle.dot')
+              //chart.selectAll('circle.dot')
+              chart.selectAll('g.y text')
+                .attr('transform', 'translate(-5,-7) rotate(315)');
                   // .on('mouseover.foo', function(d) {
                   //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
                   //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
@@ -496,7 +664,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                   // });
           });
     hourlyUtilityPurchaseLine.yAxis().tickFormat(d3.format('.1f'))
-    hourlyUtilityPurchaseLine.yAxis().ticks(3)
+    hourlyUtilityPurchaseLine.yAxis().ticks(5)
 
 function nonzero_min(chart) {
   dc.override(chart, 'yAxisMin', function () {
@@ -517,7 +685,6 @@ dc.renderAll();
 
 //##################### General Settings #####################
 //---- Map Constants
-var maps = [];
 var center = [35.38781, -118.99631];
 
 if (region_name_ds=="pge") {
@@ -558,62 +725,6 @@ var geojsonMarkerOptions = {
     fillOpacity: 0.8
 };
 
-var normalIconSize = 20,
-    bigIconSize = 30,
-    megaIconSize = 60;
-var normalIconDimens = [normalIconSize, normalIconSize],
-    normalIconAnchor = [normalIconSize/2, normalIconSize/2],
-    normalIconPopup  = [0, -normalIconSize/2 + 3];
-var bigIconDimens = [bigIconSize, bigIconSize],
-    bigIconAnchor = [bigIconSize/2, bigIconSize/2],
-    bigIconPopup  = [0, -bigIconSize/2 + 3];
-var megaIconDimens = [megaIconSize, megaIconSize],
-    megaIconAnchor = [megaIconSize/2, megaIconSize/2],
-    megaIconPopup  = [0, -megaIconSize/2 + 3];
-
-
-var NormalGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/meter.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     normalIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   normalIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  normalIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-var BigGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/switch.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     bigIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   bigIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  bigIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-var MegaGridIcon = L.Icon.extend({
-    options: {
-      iconUrl: '/static/MapApp/images/icons/substation.png',
-      // shadowUrl: 'leaf-shadow.png',
-      iconSize:     megaIconDimens, // size of the icon
-      // shadowSize:   [50, 64], // size of the shadow
-      iconAnchor:   megaIconAnchor, // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],  // the same for the shadow
-      popupAnchor:  megaIconPopup // point from which the popup should open relative to the iconAnchor
-    }
-});
-
-var meterIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/meter.png'}),
-    transmissionIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/transformer.png'}),
-    nodeIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/node.png'}),
-    loadIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/load.png'}),
-    //houseIcon = new NormalGridIcon({iconUrl: '/static/MapApp/images/icons/house.png'}),
-    switchIcon = new BigGridIcon({iconUrl: '/static/MapApp/images/icons/switch.png'}),
-    substationIcon = new MegaGridIcon({iconUrl: '/static/MapApp/images/icons/substation.png'});
-
 
 
 //##################### Layers #####################
@@ -649,6 +760,7 @@ var baseLayers1 = {
 var overlayLayers1 = {
     "Nodes": L.layerGroup([]),
     "Loads": L.layerGroup([]),
+    "Lines": L.layerGroup([]),
     "Transmission": L.layerGroup([]),
     "Substations": L.layerGroup([])
 
@@ -657,6 +769,7 @@ var overlayLayers1 = {
 //##################### Maps #####################
 var map1 = L.map('map1', {
     layers: [baseLayers1["Mapbox Theme"],
+    overlayLayers1["Lines"],
     overlayLayers1["Nodes"],
     overlayLayers1["Transmission"],
     overlayLayers1["Loads"],
@@ -721,12 +834,28 @@ function populateLayer(endpoint, layerGroup, iconPath, element_type, priority=0)
           alt:JSON.stringify({"type":element_type,"name":element['name']})
         })
         marker.bindPopup( element['name']);
-        marker.on('click', function(e) {nodeDimension.filter(e.target.options.name)
-        dc.redrawAll()
-
-        document.getElementById('map_reset').style.display = "";
-        document.getElementById("map_sub_title").innerHTML = "Results for " + e.target.options.name;
-
+        marker.on('click', function(e) {
+          if (filteredList.includes(e.target.options.name)){
+            filteredList.pop(e.target.options.name)
+            console.log(filteredList)
+            if (filteredList.length<1){
+            nodeChart.filterAll()}
+            else {
+            console.log("Filtering"+ filteredList)
+            nodeChart.filter([filteredList])}
+            dc.redrawAll()
+            if (e.target.options.type==='load'){
+            e.target.setIcon(loadIcon);}
+            else {e.target.setIcon(nodeIcon);}
+          }
+          else {
+            filteredList.push(e.target.options.name)
+            console.log(filteredList)
+            nodeChart.filter([filteredList])
+            dc.redrawAll()
+            e.target.setIcon(selected);
+          }
+        // document.getElementById('map_reset').style.display = "";
       console.log('filtered '+ e.target.options.name)})//.bindPopup(element['name']); //.bindTooltip(element['name']);
         if (priority == 1) {
           marker.setZIndexOffset(700);
@@ -776,15 +905,34 @@ function populateLayerSubstation(endpoint, layerGroup, iconPath, element_type, p
         console.log("FOUND Element to Ignore" + feature.properties.name)
         return;
       }
+
       layer.bindPopup(feature.properties.name);
-      layer.on('click', function(e) {lineDimension.filter(feature.properties.name)
-      dc.redrawAll()
-      console.log(feature.properties.name)
-    });
+      layer.on('click', function(e) {
+        if (filteredLineList.includes(e.target.feature.properties.name)){
+          filteredLineList.pop(e.target.feature.properties.name)
+          console.log(filteredLineList)
+          if (filteredLineList.length<1){
+          lineChart.filterAll()}
+          else {
+          console.log("Filtering"+ filteredList)
+          lineChart.filter([filteredLineList])
+          }
+          e.target.setStyle({color: 'red'});
+          dc.redrawAll()
+        }
+        else {
+          filteredLineList.push(e.target.feature.properties.name)
+          console.log(filteredLineList)
+          lineChart.filter(filteredLineList)
+          e.target.setStyle({color: 'blue'});
+          dc.redrawAll()
+          console.log(lineDimension)
+        }
+        });
 
       }
 
-function populateLayerLines(endpoint, priority=0) {
+function populateLayerLines(endpoint,layerGroup, priority=0) {
     $.getJSON( endpoint, function(geo_json_data) {
     lines=L.geoJson(geo_json_data,
           { color: 'red',
@@ -795,10 +943,9 @@ function populateLayerLines(endpoint, priority=0) {
            // onEachFeature:
 
         });
-      lines.addTo(map1);
+      layerGroup.addLayer(lines);
     });
   }
-
 
 
 maps.forEach(function(map_obj){
@@ -807,7 +954,7 @@ maps.forEach(function(map_obj){
     populateLayer(loadApiEndpoint, (map_obj.overlay["Loads"]), loadIcon, "load");
     populateLayer(transmissionApiEndpoint, (map_obj.overlay["Transmission"]), transmissionIcon, "transmission");
     populateLayerSubstation(substationApiEndpoint, (map_obj.overlay["Substations"]), substationIcon, "substation");
-    populateLayerLines(lineApiEndpoint, priority=0);
+    populateLayerLines(lineApiEndpoint,(map_obj.overlay["Lines"]), priority=0);
 });
 
 maps.forEach(function(map_obj){

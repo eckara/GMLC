@@ -5,23 +5,27 @@
   "scenarios":[
   {
     "value": "scenario0",
-    "name": "Scenario 0"
+    "name": "No DER"
   },
   {
     "value": "scenario1",
-    "name": "Scenario 1"
+    "name": "PV Only"
   },
   {
     "value": "scenario2",
-    "name": "Scenario 2"
+    "name": "PV and Storage"
   },
   {
     "value": "scenario3",
-    "name": "Scenario 3"
+    "name": "PV, storage, and CHP"
   },
   {
-    "value": "pgescenario4",
-    "name": "PGEScenario 4"
+    "value": "scenario4",
+    "name": "Net-metered PV, storage, and CHP"
+  },
+  {
+      "value": "scenario5",
+      "name": "PV, subsidized storage, and CHP"
   }
 ]
 },
@@ -31,19 +35,27 @@
 "scenarios":[
 {
   "value": "scenario0",
-  "name": "Scenario 0"
+  "name": "No DER"
 },
 {
   "value": "scenario1",
-  "name": "Scenario 1"
+  "name": "PV Only"
 },
 {
   "value": "scenario2",
-  "name": "Scenario 2"
+  "name": "PV and Storage"
 },
 {
   "value": "scenario3",
-  "name": "Scenario 3"
+  "name": "PV, storage, and CHP"
+},
+{
+  "value": "scenario4",
+  "name": "Net-metered PV, storage, and CHP"
+},
+{
+    "value": "scenario5",
+    "name": "PV, subsidized storage, and CHP"
 }
 ]
 },
@@ -53,19 +65,27 @@
 "scenarios":[
 {
   "value": "scenario0",
-  "name": "Scenario 0"
+  "name": "No DER"
 },
 {
   "value": "scenario1",
-  "name": "Scenario 1"
+  "name": "PV Only"
 },
 {
   "value": "scenario2",
-  "name": "Scenario 2"
+  "name": "PV and Storage"
 },
 {
   "value": "scenario3",
-  "name": "Scenario 3"
+  "name": "PV, storage, and CHP"
+},
+{
+  "value": "scenario4",
+  "name": "Net-metered PV, storage, and CHP"
+},
+{
+    "value": "scenario5",
+    "name": "PV, subsidized storage, and CHP"
 }
 ]
 }
@@ -73,22 +93,30 @@
 "transmission": [
 {
 "scenarios":[
-  {
-    "value": "scenario0",
-    "name": "Scenario 0"
-  },
-  {
-    "value": "scenario1",
-    "name": "Scenario 1"
-  },
-  {
-    "value": "scenario2",
-    "name": "TRScenario 2"
-  },
-  {
-    "value": "scenario3",
-    "name": "TRScenario 3"
-  }
+{
+  "value": "scenario0",
+  "name": "No DER"
+},
+{
+  "value": "scenario1",
+  "name": "PV Only"
+},
+{
+  "value": "scenario2",
+  "name": "PV and Storage"
+},
+{
+  "value": "scenario3",
+  "name": "PV, storage, and CHP"
+},
+{
+  "value": "scenario4",
+  "name": "Net-metered PV, storage, and CHP"
+},
+{
+    "value": "scenario5",
+    "name": "PV, subsidized storage, and CHP"
+}
 ]
 }
 ]

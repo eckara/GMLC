@@ -10,6 +10,8 @@
 
 {% block content %}
 <style type="text/css">
+    .leaflet-popup-tip {display: none;}
+
     #map1 { width: 100%; height: 50%; float: left; margin-right:0 %; margin-top:0%; padding: 0px; }
     #tab { width: 100%; margin-bottom:1%;}
     #plots {}
@@ -37,9 +39,8 @@
        <option value="weekend">Weekend</option>
        <option value="weekday">Weekday</option>
      </select>
-     <strong id="map_sub_title"></strong>
-     <a class="reset" id='map_reset' href="javascript:clearResultsTag();" style="display: none;">(reset)</a>
-     <div class="clearfix"></div>
+     <input type="button" value="Clear Filters" onClick="javascript:clearResultsTag()">
+
    </div>
    </div>
 
@@ -99,6 +100,24 @@
                     <div class="clearfix"></div>
      </div> -->
     </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <strong>Installed PV Capacity per Type[kW]</strong>
+      <table class="table table-hover" id="dc-data-table">
+        </table>
+    </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <strong>Installed Storage Capacity per Type[kW]</strong>
+      <table class="table table-hover" id="dc-data-table2">
+        </table>
+    </div>
+    </div>
+
+  </div>
 
 {% endblock %}
 
@@ -182,9 +201,24 @@ $.getScript("{% static 'MapApp/js/combined_pv_lines.js' %}")
 <!-- jQuery Sparklines -->
 function clearResultsTag() {
   nodeChart.filterAll();
+  lineChart.filterAll();
   dc.redrawAll();
-  document.getElementById("map_sub_title").innerHTML = "";
-  document.getElementById("map_reset").style = "display: none;";
+  maps.forEach(function(map_obj) {
+    console.log(map_obj)
+    map_obj.overlay["Nodes"].eachLayer(function(layer)
+    {
+    if ( filteredList.indexOf(layer.options.name) >-1){
+            layer.setIcon(nodeIcon)}
+  });
+  map_obj.overlay["Loads"].eachLayer(function(layer)
+  {
+  if ( filteredList.indexOf(layer.options.name) >-1){
+          layer.setIcon(loadIcon)}
+  });
+  map_obj.overlay["Lines"].eachLayer(function(layer)
+  {layer.setStyle({color:"red"})});
+
+});
 };
 
 // var onResizing = function(event) {
@@ -206,8 +240,8 @@ $('#selectdays').change(function() {
     var value = $option.val();//to get content of "value" attrib
     var text = $option.text();//to get <option>Text</option> content
     console.log(value)
-    voltageMagnitudeLine.filter(value)
-    powerFlowLine.filter(value)
+    linedayChart.filter(value)
+    dayChart.filter(value)
     dc.redrawAll()
 });
 
