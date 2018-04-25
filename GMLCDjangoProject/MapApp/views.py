@@ -16,16 +16,16 @@ def visualization(request):
 
 def transmission(request):
     template = loader.get_template('visualization_transmission.html')
-    return HttpResponse(template.render(request))
+    return HttpResponse(template.render({},request))
 
 def distribution(request):
     template = loader.get_template('visualization.html')
-    return HttpResponse(template.render(request))
+    return HttpResponse(template.render({},request))
 
 def comparison(request):
     template = loader.get_template('visualization_comparison.html')
-    return HttpResponse(template.render(request))
+    return HttpResponse(template.render({},request))
 
 def about(request):
     template = loader.get_template('about.html')
-    return HttpResponse(template.render( request))
+    return HttpResponse(template.render({},request))

@@ -5,7 +5,7 @@
 // Create chart objects associated with the container elements identified by the css selector.
 // Note: It is often a good idea to have these objects accessible at the global scope so that they can be modified or
 // filtered by other page controls.
-var typeValuePie = dc.pieChart('#type-value-chart');
+var typeValueBar = dc.barChart('#type-value-chart');
 //var fluctuationChart = dc.barChart('#fluctuation-chart');
 var monthValuePie = dc.pieChart('#month-value-chart');
 //var dayOfWeekChart = dc.rowChart('#day-of-week-chart');
@@ -23,7 +23,7 @@ var daytypeDimension=[]
 var nodeChart = dc.pieChart('#bar');
 var lineChart = dc.pieChart('#bar2');
 var dayChart=dc.pieChart('#day');
-var linedayChart=dc.pieChart('#lineday');
+// var linedayChart=dc.pieChart('#lineday');
 
 // document.getElementById('ScenarioSelector').onchange = function(e) {
 //     scenario_name_ds=e.target.value
@@ -48,7 +48,29 @@ var bigIconDimens = [bigIconSize, bigIconSize],
 var megaIconDimens = [megaIconSize, megaIconSize],
     megaIconAnchor = [megaIconSize/2, megaIconSize/2],
     megaIconPopup  = [0, -megaIconSize/2 + 3];
-
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
 
 var NormalGridIcon = L.Icon.extend({
     options: {
@@ -201,9 +223,37 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       return d.purchase_from_utility;
   });
 
-  var typeGenerationGroup = typeDimension.group().reduceSum(function (d) {
-      return d.hourly_pv_self_consumpt;
+  var typePurchaseGroup = typeDimension.group().reduceSum(function (d) {
+      return d.purchase_from_utility;
   });
+
+  // Generate Voltage Averages
+  function reduceVoltageAddAvg(attr) {
+      return function(p,v) {
+          if (parseFloat(v[attr])>0) {
+              var dummy=parseFloat(v[attr])
+              ++p.count
+              p.sums += dummy;
+              p.averages = (p.count === 0) ? 0 : p.sums/p.count; // gaurd against dividing by zero
+          }
+          return p;
+      };
+  }
+  function reduceVoltageRemoveAvg(attr) {
+      return function(p,v) {
+          if (parseFloat(v[attr])>0) {
+             var dummy=parseFloat(v[attr])
+              --p.count
+              p.sums -= dummy;
+              // p.averages = p.count ? p.sums/p.count : 0;
+              p.averages = (p.count === 0) ? 0 : p.sums/p.count;
+          }
+          return p;
+      };
+  }
+  function reduceVoltageInitAvg() {
+    return {count:0, sums:0, averages:0};
+  }
 
 
   // Generate Averages
@@ -211,8 +261,10 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       return function(p,v) {
           if (!isNaN(parseFloat(v[attr]))) {
               var dummy=parseFloat(v[attr])
+              if (Math.abs(dummy) < 0.001)
+              {dummy=0}
+              p.sums += dummy
               ++p.count
-              p.sums += dummy;
               p.averages = (p.count === 0) ? 0 : p.sums/p.count; // gaurd against dividing by zero
           }
           return p;
@@ -222,8 +274,10 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       return function(p,v) {
           if (!isNaN(parseFloat(v[attr]))) {
              var dummy=parseFloat(v[attr])
-              --p.count
+             if (Math.abs(dummy) < 0.001)
+              {dummy=0}
               p.sums -= dummy;
+              --p.count
               // p.averages = p.count ? p.sums/p.count : 0;
               p.averages = (p.count === 0) ? 0 : p.sums/p.count;
           }
@@ -251,22 +305,25 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
     };
   }
 
-  var avgPowerFlowAGroup= lineHourDimension.group().reduce(reduceAddAvg('power_flow_a_P'), reduceRemoveAvg('power_flow_a_P'), reduceInitAvg);
-  var avgPowerFlowBGroup=lineHourDimension.group().reduce(reduceAddAvg('power_flow_b_P'), reduceRemoveAvg('power_flow_b_P'), reduceInitAvg);
-  var avgPowerFlowCGroup=lineHourDimension.group().reduce(reduceAddAvg('power_flow_c_P'), reduceRemoveAvg('power_flow_c_P'), reduceInitAvg);
+  var avgPowerFlowAGroup= lineHourDimension.group().reduce(reduceAddAvg('power_in_a_P'), reduceRemoveAvg('power_in_a_P'), reduceInitAvg);
+  var avgPowerFlowBGroup=lineHourDimension.group().reduce(reduceAddAvg('power_in_b_P'), reduceRemoveAvg('power_in_b_P'), reduceInitAvg);
+  var avgPowerFlowCGroup=lineHourDimension.group().reduce(reduceAddAvg('power_in_c_P'), reduceRemoveAvg('power_in_c_P'), reduceInitAvg);
 
-  var avgReactiveFlowAGroup= lineHourDimension.group().reduce(reduceAddAvg('power_flow_a_Q'), reduceRemoveAvg('power_flow_a_Q'), reduceInitAvg);
-  var avgReactiveFlowBGroup=lineHourDimension.group().reduce(reduceAddAvg('power_flow_b_Q'), reduceRemoveAvg('power_flow_b_Q'), reduceInitAvg);
-  var avgReactiveFlowCGroup=lineHourDimension.group().reduce(reduceAddAvg('power_flow_c_Q'), reduceRemoveAvg('power_flow_c_Q'), reduceInitAvg);
+  var avgReactiveFlowAGroup= lineHourDimension.group().reduce(reduceAddAvg('power_in_a_Q'), reduceRemoveAvg('power_in_a_Q'), reduceInitAvg);
+  var avgReactiveFlowBGroup=lineHourDimension.group().reduce(reduceAddAvg('power_in_b_Q'), reduceRemoveAvg('power_in_b_Q'), reduceInitAvg);
+  var avgReactiveFlowCGroup=lineHourDimension.group().reduce(reduceAddAvg('power_in_c_Q'), reduceRemoveAvg('power_in_c_Q'), reduceInitAvg);
 
-  var avgvoltageAValueGroup = hourDimension.group().reduce(reduceAddAvg('voltage_a_magnitude'), reduceRemoveAvg('voltage_a_magnitude'), reduceInitAvg);
-  var avgvoltageBValueGroup = hourDimension.group().reduce(reduceAddAvg('voltage_b_magnitude'), reduceRemoveAvg('voltage_b_magnitude'), reduceInitAvg);
-  var avgvoltageCValueGroup = hourDimension.group().reduce(reduceAddAvg('voltage_c_magnitude'), reduceRemoveAvg('voltage_c_magnitude'), reduceInitAvg);
+  var avgvoltageAValueGroup = hourDimension.group().reduce(reduceVoltageAddAvg('voltage_a_magnitude'), reduceVoltageRemoveAvg('voltage_a_magnitude'), reduceVoltageInitAvg);
+  var avgvoltageBValueGroup = hourDimension.group().reduce(reduceVoltageAddAvg('voltage_b_magnitude'), reduceVoltageRemoveAvg('voltage_b_magnitude'), reduceVoltageInitAvg);
+  var avgvoltageCValueGroup = hourDimension.group().reduce(reduceVoltageAddAvg('voltage_c_magnitude'), reduceVoltageRemoveAvg('voltage_c_magnitude'), reduceVoltageInitAvg);
   var avgUtilityByHourGroup = hourDimension.group().reduce(reduceAddAvg('purchase_from_utility'), reduceRemoveAvg('purchase_from_utility'), reduceInitAvg);
   var avgSolarByHourGroup = hourDimension.group().reduce(reduceAddAvg('hourly_pv_self_consumpt'), reduceRemoveAvg('hourly_pv_self_consumpt'), reduceInitAvg);
+  var avgSolarExportByHourGroup = hourDimension.group().reduce(reduceAddAvg('hourly_pv_export'), reduceRemoveAvg('hourly_pv_export'), reduceInitAvg);
+
   var avgBattByHourGroup = hourDimension.group().reduce(reduceAddAvg('elec_provided_by_stationnary_battery_charging_after_eff'), reduceRemoveAvg('elec_provided_by_stationnary_battery_charging_after_eff'), reduceInitAvg);
   var avgInstalledSolarByType = typeDimension.group().reduce(reduceAddAvg('pv_inst'), reduceRemoveAvg('pv_inst'), reduceInitAvg);
   var avgInstalledBatByType = typeDimension.group().reduce(reduceAddAvg('storage_inst'), reduceRemoveAvg('storage_inst'), reduceInitAvg);
+
   monthValuePie /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
   // (_optional_) define chart width, `default = 200`
       //.width(350)
@@ -287,7 +344,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       })
 
 
-    typeValuePie /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+    typeValueBar /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
     // (_optional_) define chart width, `default = 200`
         //.width(225)
     // (optional) define chart height, `default = 200`
@@ -296,15 +353,32 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
         //.innerRadius(70)
 //      .externalRadius(110)
     // Set dimension
+        .x(d3.scale.ordinal().domain(typeDimension))
+        .xUnits(dc.units.ordinal)
         .dimension(typeDimension)
+        .yAxisLabel("",30)
     // Set group
-        .group(typeGenerationGroup)
-        .legend(dc.legend())
-        .on('pretransition', function(chart) {
-          typeValuePie.selectAll('text.pie-slice').text(function(d) {
-              return d.data.key.substring(0, 3)+".";
-          })
+        .group(typePurchaseGroup)
+        .elasticY(true)
+        .on('renderlet', function(chart) {
+            chart.selectAll('g.y text')
+              .attr('transform', 'translate(-3,-7) rotate(315)')
         })
+        .on('postRender', function(chart) {
+         chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+            .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+            .text('Kilowatts [kWh]');
+         //different for x-axis label
+      });
+      typeValueBar.yAxis().tickFormat(d3.format('.0f'))
+      typeValueBar.yAxis().ticks(5)
+
+        // .legend(dc.legend())
+        // .on('pretransition', function(chart) {
+        //   typeValuePie.selectAll('text.pie-slice').text(function(d) {
+        //       return d.data.key.substring(0, 3)+".";
+        //   })
+        // })
 
     nodeChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
     // (_optional_) define chart width, `default = 200`
@@ -317,7 +391,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
     // Set dimension
         .dimension(nodeDimension)
     // Set group
-        .group(typeGenerationGroup)
+        .group(typePurchaseGroup)
 
     lineChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
     // (_optional_) define chart width, `default = 200`
@@ -341,22 +415,22 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
         .innerRadius(70)
     //      .externalRadius(110)
     // Set dimension
-        .dimension(daytypeDimension)
+        .dimension(mirror_dimension(daytypeDimension,lineDayTypeDimension))
     // Set group
-        .group(typeGenerationGroup)
-
-    linedayChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
-    // (_optional_) define chart width, `default = 200`
-      //  .width(225)
-    // (optional) define chart height, `default = 200`
-      //  .height(225)
-    // Define pie radius
-        .innerRadius(70)
-    //      .externalRadius(110)
-    // Set dimension
-        .dimension(lineDayTypeDimension)
-    // Set group
-        .group(avgPowerFlowAGroup)
+        .group(avgUtilityByHourGroup)
+    //
+    // linedayChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
+    // // (_optional_) define chart width, `default = 200`
+    //   //  .width(225)
+    // // (optional) define chart height, `default = 200`
+    //   //  .height(225)
+    // // Define pie radius
+    //     .innerRadius(70)
+    // //      .externalRadius(110)
+    // // Set dimension
+    //     .dimension(lineDayTypeDimension)
+    // // Set group
+    //     .group(avgPowerFlowAGroup)
 
     rank = function (p) { return "" };
 
@@ -367,8 +441,8 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
         .dimension(avgInstalledSolarByType)
         .group(rank)
         .columns([function (d) { return d.key },
-                  function (d) { return Math.round(d.value.averages) }])
-        .sortBy(function (d) { return d.value.averages })
+                  function (d) { return Math.round(d.value.sums/1000) }])
+        .sortBy(function (d) { return d.value.sums/1000 })
         .order(d3.descending)
         //
     tablet2
@@ -377,8 +451,8 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
         .dimension(avgInstalledBatByType)
         .group(rank)
         .columns([function (d) { return d.key },
-                  function (d) { return Math.round(d.value.averages) }])
-        .sortBy(function (d) { return d.value.averages })
+                  function (d) { return Math.round(d.value.sums/1000) }])
+        .sortBy(function (d) { return d.value.sums/1000 })
         .order(d3.descending)
     // tablet
 //     .width(600)
@@ -407,11 +481,14 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
       //.width(600)
       //.height(225)
       .x(d3.scale.linear().domain([0, 23]))
-      .mouseZoomable(true)
-      .yAxisLabel("Kilovolts, [kV]",30)
+      .y(d3.scale.linear().domain([0.8, 1.2]))
+      .mouseZoomable(false)
+      .yAxisLabel("",30)
       .xAxisLabel("Hour of Day")
       .renderHorizontalGridLines(true)
       .brushOn(false)
+      .title(function(d) { return  d.value.averages/2400 ; })
+
       .compose([
           nonzero_min(dc.lineChart(voltageMagnitudeLine)
               .dimension(hourDimension)
@@ -419,9 +496,10 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               .dotRadius([10])
               .group(avgvoltageAValueGroup, 'Voltage A')
               .valueAccessor(function (d) {
-                    return d.value.averages/1000;
+                    return d.value.averages/2400;
                 })
               .dashStyle([2,2]))
+
               .defined(function(d) {
                     return d.y != null;
                 }),
@@ -431,9 +509,11 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               .dotRadius([10])
               .group(avgvoltageBValueGroup, 'Voltage B')
               .valueAccessor(function (d) {
-                    return d.value.averages/1000;
+                    return d.value.averages/2400;
                 })
               .dashStyle([5,5]))
+
+
               .defined(function(d) {
                     return d.y != null;
                 }),
@@ -443,30 +523,28 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               .dotRadius([10])
               .group(avgvoltageCValueGroup, 'Voltage C')
               .valueAccessor(function (d) {
-                    return d.value.averages/1000;
+                    return d.value.averages/2400;
                 })
               .dashStyle([1,1]))
+
+
               .defined(function(d) {
                     return d.y != null;
                 })
           ])
-      .elasticY(true)
       .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
       .on('renderlet', function(chart) {
-          chart.selectAll('circle.dot')
           chart.selectAll('g.y text')
             .attr('transform', 'translate(-5,-7) rotate(315)')
-              // .on('mouseover.foo', function(d) {
-              //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-              //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-              //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-              // })
-              .on('mouseout.foo', function(d) {
-                  //console.log('out')
-              });
-      });
+      })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('p.u.');
+       //different for x-axis label
+    });
       voltageMagnitudeLine.yAxis().tickFormat(d3.format('.2f'))
-      voltageMagnitudeLine.yAxis().ticks(5)
+      voltageMagnitudeLine.yAxis().ticks(3)
 
 
        /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
@@ -475,21 +553,23 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           //.height(225)
       powerFlowLine
           .x(d3.scale.linear().domain([0, 23]))
-          .mouseZoomable(true)
-          .yAxisLabel("Kilowatts, [kW]",30)
+          .mouseZoomable(false)
+          .yAxisLabel("",30)
           .xAxisLabel("Hour of Day")
           .renderHorizontalGridLines(true)
           .brushOn(false)
+          .title(function(d) { return  d.value.sums/1000 ; })
           .compose([
               nonzero_min(dc.lineChart(powerFlowLine)
                   .dimension(lineHourDimension)
                   .colors('red')
                   .dotRadius([10])
-                  .group(avgPowerFlowAGroup, 'Power Flow A')
+                  .group(avgPowerFlowAGroup, 'Total Active A')
                   .valueAccessor(function (d) {
-                        return d.value.averages/1000;
+                        return d.value.sums/1000;
                     })
                   .dashStyle([2,2]))
+
                   .defined(function(d) {
                         return d.y != null;
                     }),
@@ -497,9 +577,9 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                   .dimension(lineHourDimension)
                   .colors('blue')
                   .dotRadius([10])
-                  .group(avgPowerFlowBGroup, 'Power Flow B')
+                  .group(avgPowerFlowBGroup, 'Total Active B')
                   .valueAccessor(function (d) {
-                        return d.value.averages/1000;
+                        return d.value.sums/1000;
                     })
                   .dashStyle([5,5]))
                   .defined(function(d) {
@@ -509,9 +589,9 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                   .dimension(lineHourDimension)
                   .colors('green')
                   .dotRadius([10])
-                  .group(avgPowerFlowCGroup, 'Power Flow C')
+                  .group(avgPowerFlowCGroup, 'Total Active C')
                   .valueAccessor(function (d) {
-                        return d.value.averages/1000;
+                        return d.value.sums/1000;
                     })
                   .dashStyle([1,1]))
                   .defined(function(d) {
@@ -521,36 +601,36 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           .elasticY(true)
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
-              chart.selectAll('circle.dot')
               chart.selectAll('g.y text')
                 .attr('transform', 'translate(-5,-7) rotate(315)')
-                  // .on('mouseover.foo', function(d) {
-                  //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                  //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                  //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                  // })
-                  .on('mouseout.foo', function(d) {
-                      //console.log('out')
-                  });
-          });
-          powerFlowLine.yAxis().tickFormat(d3.format('.2f'))
+          })
+          .on('postRender', function(chart) {
+           chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+              .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+              .text('Kilowatts, [kW]');
+           //different for x-axis label
+        });
+
+          powerFlowLine.yAxis().tickFormat(d3.format('.1e'))
           powerFlowLine.yAxis().ticks(5)
 
           reactiveFlowLine
               .x(d3.scale.linear().domain([0, 23]))
-              .mouseZoomable(true)
-              .yAxisLabel("KiloVARs, [kVARs]",30)
+              .mouseZoomable(false)
+              .yAxisLabel("",30)
               .xAxisLabel("Hour of Day")
               .renderHorizontalGridLines(true)
               .brushOn(false)
+              .title(function(d) { return  d.value.sums/1000 ; })
+
               .compose([
                   nonzero_min(dc.lineChart(reactiveFlowLine)
                       .dimension(lineHourDimension)
                       .colors('red')
                       .dotRadius([10])
-                      .group(avgReactiveFlowAGroup, 'Phase A')
+                      .group(avgReactiveFlowAGroup, 'Total Reactive A')
                       .valueAccessor(function (d) {
-                            return d.value.averages/1000;
+                            return d.value.sums/1000;
                         })
                       .dashStyle([2,2]))
                       .defined(function(d) {
@@ -560,11 +640,13 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                       .dimension(lineHourDimension)
                       .colors('blue')
                       .dotRadius([10])
-                      .group(avgReactiveFlowBGroup, 'Phase B')
+                      .group(avgReactiveFlowBGroup, 'Total Reactive B')
                       .valueAccessor(function (d) {
-                            return d.value.averages/1000;
+                            return d.value.sums/1000;
                         })
                       .dashStyle([5,5]))
+
+
                       .defined(function(d) {
                             return d.y != null;
                         }),
@@ -572,11 +654,13 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
                       .dimension(lineHourDimension)
                       .colors('green')
                       .dotRadius([10])
-                      .group(avgReactiveFlowCGroup, 'Phase C')
+                      .group(avgReactiveFlowCGroup, 'Total Reactive C')
                       .valueAccessor(function (d) {
-                            return d.value.averages/1000;
+                            return d.value.sums/1000;
                         })
                       .dashStyle([1,1]))
+
+
                       .defined(function(d) {
                             return d.y != null;
                         })
@@ -584,19 +668,16 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
               .elasticY(true)
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
-                  chart.selectAll('circle.dot')
                   chart.selectAll('g.y text')
                     .attr('transform', 'translate(-5,-7) rotate(315)')
-                      // .on('mouseover.foo', function(d) {
-                      //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                      //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                      //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                      // })
-                      .on('mouseout.foo', function(d) {
-                          //console.log('out')
-                      });
-              });
-              reactiveFlowLine.yAxis().tickFormat(d3.format('.2f'))
+              })
+              .on('postRender', function(chart) {
+               chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+                  .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+                  .text('KiloVARS, [kVARs]');
+               //different for x-axis label
+            });
+              reactiveFlowLine.yAxis().tickFormat(d3.format('.1e'))
               reactiveFlowLine.yAxis().ticks(5)
 
       // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
@@ -607,16 +688,19 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           .renderArea(true)
         //  .width(600)
         //  .height(225)
-          .yAxisLabel("Energy,[kWh]",30)
+          .yAxisLabel("",30)
           .xAxisLabel("Hour of Day")
           .transitionDuration(1000)
         //  .margins({top: 30, right: 50, bottom: 25, left: 40})
           .dimension(hourDimension)
-          .mouseZoomable(true)
+          .mouseZoomable(false)
       // Specify a "range chart" to link its brush extent with the zoom of the current "focus chart".
           //.rangeChart(volumeChart)
           .elasticY(true)
           .dashStyle([3,1,1,1])
+
+          .title(function(d) { return  d.value.sums ; })
+
           .dotRadius([10])
           .x(d3.scale.linear().domain([0, 23]))
           .renderHorizontalGridLines(true)
@@ -627,20 +711,34 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
           // legend.
           // The `.valueAccessor` will be used for the base layer
-          .group(avgUtilityByHourGroup, 'Avg. Utility Purchase')
+          .group(avgBattByHourGroup, 'Total from Battery')
           .valueAccessor(function (d) {
-                return d.value.averages;
+                  return d.value.sums;
+              })
+          .stack(avgSolarByHourGroup, 'Solar Consumed Locally')
+          .valueAccessor(function (d) {
+                return d.value.sums;
+            })
+          .stack(avgSolarExportByHourGroup, 'Solar Export')
+          .valueAccessor(function (d) {
+                return d.value.sums;
+            })
+          .stack(avgUtilityByHourGroup, 'Total Utility Purchase')
+          .valueAccessor(function (d) {
+                return d.value.sums ;
             })
           // Stack additional layers with `.stack`. The first paramenter is a new group.
           // The second parameter is the series name. The third is a value accessor.
-          .stack(avgSolarByHourGroup, 'Avg. Solar Generation')
-          .valueAccessor(function (d) {
-                return d.value.averages;
-            })
-          .stack(avgBattByHourGroup, 'Avg. from Battery')
-          .valueAccessor(function (d) {
-                  return d.value.averages;
-              })
+          .on('renderlet', function(chart) {
+              chart.selectAll('g.y text')
+                .attr('transform', 'translate(-5,-7) rotate(315)')
+          })
+          .on('postRender', function(chart) {
+           chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+              .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+              .text('Energy, [kWh]');
+           //different for x-axis label
+        });
 
           // Title can be called by any stack layer.
           // .title(function (d) {
@@ -650,20 +748,7 @@ d3.csv('/static/MapApp/data/'+region_name_ds+"/"+scenario_name_ds+'.csv', functi
           //     }
           //     return d.key + '\n' + numberFormat(value);
           // });
-          .on('renderlet', function(chart) {
-              //chart.selectAll('circle.dot')
-              chart.selectAll('g.y text')
-                .attr('transform', 'translate(-5,-7) rotate(315)');
-                  // .on('mouseover.foo', function(d) {
-                  //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                  //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                  //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                  // })
-                  // .on('mouseout.foo', function(d) {
-                  //     //console.log('out')
-                  // });
-          });
-    hourlyUtilityPurchaseLine.yAxis().tickFormat(d3.format('.1f'))
+    hourlyUtilityPurchaseLine.yAxis().tickFormat(d3.format('.1e'))
     hourlyUtilityPurchaseLine.yAxis().ticks(5)
 
 function nonzero_min(chart) {
@@ -837,26 +922,30 @@ function populateLayer(endpoint, layerGroup, iconPath, element_type, priority=0)
         marker.on('click', function(e) {
           if (filteredList.includes(e.target.options.name)){
             filteredList.pop(e.target.options.name)
+            console.log("removed node" + e.target.options.name)
             console.log(filteredList)
             if (filteredList.length<1){
-            nodeChart.filterAll()}
+            nodeChart.filterAll()
+            dc.redrawAll()}
             else {
             console.log("Filtering"+ filteredList)
-            nodeChart.filter([filteredList])}
-            dc.redrawAll()
-            if (e.target.options.type==='load'){
+            nodeChart.filter([filteredList])
+            dc.redrawAll()}
+            if (e.target.options.name.substr(0, 4)==='load'){
             e.target.setIcon(loadIcon);}
             else {e.target.setIcon(nodeIcon);}
           }
           else {
             filteredList.push(e.target.options.name)
+            console.log("added node" + e.target.options.name)
             console.log(filteredList)
             nodeChart.filter([filteredList])
             dc.redrawAll()
             e.target.setIcon(selected);
           }
+        })
         // document.getElementById('map_reset').style.display = "";
-      console.log('filtered '+ e.target.options.name)})//.bindPopup(element['name']); //.bindTooltip(element['name']);
+      //console.log('filtered '+ e.target.options.name)})//.bindPopup(element['name']); //.bindTooltip(element['name']);
         if (priority == 1) {
           marker.setZIndexOffset(700);
         }

@@ -1,123 +1,35 @@
-{"distribution": [
-  {
-  "name": "PGE",
-  "value": "pge",
-  "scenarios":[
-  {
-    "value": "scenario0",
-    "name": "No DER"
-  },
-  {
-    "value": "scenario1",
-    "name": "PV Only"
-  },
-  {
-    "value": "scenario2",
-    "name": "PV and Storage"
-  },
-  {
-    "value": "scenario3",
-    "name": "PV, storage, and CHP"
-  },
-  {
-    "value": "scenario4",
-    "name": "Net-metered PV, storage, and CHP"
-  },
-  {
-      "value": "scenario5",
-      "name": "PV, subsidized storage, and CHP"
-  }
-]
-},
-{
-"name": "SCE",
-"value": "sce",
-"scenarios":[
-{
-  "value": "scenario0",
-  "name": "No DER"
-},
-{
-  "value": "scenario1",
-  "name": "PV Only"
-},
-{
-  "value": "scenario2",
-  "name": "PV and Storage"
-},
-{
-  "value": "scenario3",
-  "name": "PV, storage, and CHP"
-},
-{
-  "value": "scenario4",
-  "name": "Net-metered PV, storage, and CHP"
-},
-{
-    "value": "scenario5",
-    "name": "PV, subsidized storage, and CHP"
-}
-]
-},
-{
-"name": "SDGE",
-"value": "sdge",
-"scenarios":[
-{
-  "value": "scenario0",
-  "name": "No DER"
-},
-{
-  "value": "scenario1",
-  "name": "PV Only"
-},
-{
-  "value": "scenario2",
-  "name": "PV and Storage"
-},
-{
-  "value": "scenario3",
-  "name": "PV, storage, and CHP"
-},
-{
-  "value": "scenario4",
-  "name": "Net-metered PV, storage, and CHP"
-},
-{
-    "value": "scenario5",
-    "name": "PV, subsidized storage, and CHP"
-}
-]
-}
-],
+{"distribution": [{"scenarios":
+	[{"name": "BC", "value": "scenario1"},
+		{"name": "PV", "value": "scenario2"},
+		{"name": "PV+0.7STO+CHP", "value": "scenario3"},
+		{"name": "PV+STO", "value": "scenario4"},
+		{"name": "PV+STO+CHP", "value": "scenario5"},
+		{"name": "PV+STO+CHP+NM", "value": "scenario6"}],
+"name": "PGE",
+"value": "pge"},
+{"scenarios": [{"name": "BC", "value": "scenario7"},
+	{"name": "PV", "value": "scenario8"},
+	{"name": "PV+0.7STO+CHP", "value": "scenario9"},
+	{"name": "PV+STO", "value": "scenario10"},
+	{"name": "PV+STO+CHP", "value": "scenario11"},
+	{"name": "PV+STO+CHP+NM", "value": "scenario12"}],
+"name": "SCE", "value": "sce"},
+{"scenarios": [
+	{"name": "BC", "value": "scenario13"},
+	{"name": "PV", "value": "scenario14"},
+	{"name": "PV+0.7STO+CHP", "value": "scenario15"},
+	{"name": "PV+STO", "value": "scenario16"},
+	{"name": "PV+STO+CHP", "value": "scenario17"},
+	{"name": "PV+STO+CHP+NM", "value": "scenario18"}], "name": "SDGE", "value": "sdge"}],
 "transmission": [
 {
 "scenarios":[
-{
-  "value": "scenario0",
-  "name": "No DER"
-},
-{
-  "value": "scenario1",
-  "name": "PV Only"
-},
-{
-  "value": "scenario2",
-  "name": "PV and Storage"
-},
-{
-  "value": "scenario3",
-  "name": "PV, storage, and CHP"
-},
-{
-  "value": "scenario4",
-  "name": "Net-metered PV, storage, and CHP"
-},
-{
-    "value": "scenario5",
-    "name": "PV, subsidized storage, and CHP"
-}
-]
+	{"name": "BC", "value": "scenario1"},
+	{"name": "PV", "value": "scenario2"},
+	{"name": "PV+0.7STO+CHP", "value": "scenario3"},
+	{"name": "PV+STO", "value": "scenario4"},
+	{"name": "PV+STO+CHP", "value": "scenario5"},
+	{"name": "PV+STO+CHP+NM", "value": "scenario6"}]
 }
 ]
 }

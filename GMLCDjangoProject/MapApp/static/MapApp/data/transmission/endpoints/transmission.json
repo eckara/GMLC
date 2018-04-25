@@ -1,24 +1,58 @@
 [{
     "class": "transmission",
-    "longitude":"-117.9220",
-    "latitude":"34.0989",
-    "name": "WECCbus154"
+    "longitude":"-113.435889",
+    "latitude":"41.495111",
+    "name": "WECCbus157",
+    "toggle": "True"
+
+  },
+  {
+      "class": "transmission",
+      "longitude":"-114.435889",
+      "latitude":"41.495111",
+      "name": "WECCbus156",
+      "toggle": "False"
+    },
+  {
+        "class": "transmission",
+        "longitude":"-112.535889",
+        "latitude":"41.495111",
+        "name": "WECCbus161",
+        "toggle": "False"
   },
   {
     "class": "transmission",
-    "longitude":"-117.9220",
-    "latitude":"34.1",
-    "name": "WECCbus153"
+    "longitude":"-117.270115",
+    "latitude":"34.130775",
+    "name": "WECCbus54",
+    "toggle": "True"
   },
   {
     "class": "transmission",
-    "longitude":"-117.9188",
-    "latitude":"33.6412",
-    "name": "WECCbus143"
+    "longitude":"-117.133353",
+    "latitude":"34.873274",
+    "name": "WECCbus57",
+    "toggle": "True"
   },
   {
     "class": "transmission",
-    "longitude":"-120.8689",
-    "latitude":"38.2857",
-    "name": "WECCbus150"
-}]
+    "longitude":"-117.733353",
+    "latitude":"35.373274",
+    "name": "WECCbus42",
+    "toggle": "False"
+  },
+  {
+    "class": "transmission",
+    "longitude":"-117.733353",
+    "latitude":"34.873274",
+    "name": "WECCbus50",
+    "toggle": "False"
+  },
+  {
+    "class": "transmission",
+    "longitude":"-117.133353",
+    "latitude":"35.373274",
+    "name": "WECCbus58",
+    "toggle": "False"
+  }
+]

@@ -7,19 +7,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -120.8689,
-                      38.2857,
+                      -114.435889,
+                      41.495111,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                      -113.435889,
+                      41.495111,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline176",
+                "name": "WECClink156-157",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "
@@ -31,19 +31,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -120.8689,
-                      38.2857,
+                      -113.435889,
+                      41.495111,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                      -112.535889,
+                      41.495111,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline177",
+                "name": "WECClink157-161",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "
@@ -55,19 +55,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -117.9188,
-                      33.6412,
+                      -117.733353,
+                      35.373274,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                    -117.133353,
+                    34.873274,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline174",
+                "name": "WECClink42-57",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "
@@ -79,19 +79,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -117.9220,
-                      34.1,
+                      -117.733353,
+                      34.873274,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                      -117.133353,
+                      34.873274,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline256",
+                "name": "WECClink50-57",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "
@@ -103,19 +103,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -117.9220,
-                      34.1,
+                      -117.270115,
+                      34.130775,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                      -117.133353,
+                      34.873274,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline257",
+                "name": "WECClink54-57",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "
@@ -127,19 +127,19 @@
                 "type": "LineString",
                 "coordinates": [
                     [
-                      -117.9220,
-                      34.1,
+                      -117.133353,
+                      34.873274,
                         50
                     ],
                     [
-                      -117.9220,
-                      34.0989,
+                      -117.133353,
+                      35.373274,
                         50
                     ]
                 ]
             },
             "properties": {
-                "name": "WECCline258",
+                "name": "WECClink57-58",
                 "styleUrl": "#transmission_line",
                 "styleHash": "5223c3a6",
                 "description": "\n                    "

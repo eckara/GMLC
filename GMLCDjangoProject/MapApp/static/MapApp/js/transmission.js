@@ -227,11 +227,13 @@ voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
       //.width(600)
       //.height(225)
       .x(d3.scale.linear().domain([0, 23]))
-      .mouseZoomable(true)
-      .yAxisLabel("Kilovolts, [kV]",30)
+      .mouseZoomable(false)
+
+      .yAxisLabel("",30)
       .xAxisLabel("Hour of Day")
       .renderHorizontalGridLines(true)
       .brushOn(false)
+      .title(function(d) { return  d.value.averages; })
       .compose([
           nonzero_min(dc.lineChart(voltageMagnitudeLine)
               .dimension(hourDimension)
@@ -249,30 +251,30 @@ voltageMagnitudeLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
       .elasticY(true)
       .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
       .on('renderlet', function(chart) {
-          chart.selectAll('circle.dot')
           chart.selectAll('g.y text')
             .attr('transform', 'translate(-5,-7) rotate(315)')
-              // .on('mouseover.foo', function(d) {
-              //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-              //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-              //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-              // })
-              .on('mouseout.foo', function(d) {
-                  //console.log('out')
-              });
-      });
-      voltageMagnitudeLine.yAxis().tickFormat(d3.format('.0f'))
+      })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('p.u.');
+       //different for x-axis label
+    });
+      voltageMagnitudeLine.yAxis().tickFormat(d3.format('.3f'))
       voltageMagnitudeLine.yAxis().ticks(3)
 activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           //.renderArea(true)
           //.width(600)
           //.height(225)
           .x(d3.scale.linear().domain([0, 23]))
-          .mouseZoomable(true)
-          .yAxisLabel("Kilowatts, [kW]",30)
+          .mouseZoomable(false)
+
+          .yAxisLabel("",30)
           .xAxisLabel("Hour of Day")
           .renderHorizontalGridLines(true)
           .brushOn(false)
+          .title(function(d) { return  d.value.sums ; })
+
           .compose([
               nonzero_min(dc.lineChart(activePowerLine)
                   .dimension(hourDimension)
@@ -280,7 +282,7 @@ activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                   .dotRadius([10])
                   .group(avgActivePowerGroup, 'Active Power')
                   .valueAccessor(function (d) {
-                        return d.value.averages;
+                        return d.value.sums;
                     })
                   .dashStyle([2,2]))
                   .defined(function(d) {
@@ -290,19 +292,16 @@ activePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           .elasticY(true)
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
-              chart.selectAll('circle.dot')
               chart.selectAll('g.y text')
                 .attr('transform', 'translate(-5,-7) rotate(315)')
-                  // .on('mouseover.foo', function(d) {
-                  //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                  //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                  //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                  // })
-                  .on('mouseout.foo', function(d) {
-                      //console.log('out')
-                  });
-          });
-          activePowerLine.yAxis().tickFormat(d3.format('.0f'))
+          })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('Active Power, [GW]');
+       //different for x-axis label
+    });
+          activePowerLine.yAxis().tickFormat(d3.format('.2f'))
           activePowerLine.yAxis().ticks(3)
        /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           //.renderArea(true)
@@ -313,11 +312,14 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                     //.width(600)
                     //.height(225)
                     .x(d3.scale.linear().domain([0, 23]))
-                    .mouseZoomable(true)
-                    .yAxisLabel("KiloVARs, [kVAR]",30)
+                    .mouseZoomable(false)
+
+                    .yAxisLabel("",30)
                     .xAxisLabel("Hour of Day")
                     .renderHorizontalGridLines(true)
                     .brushOn(false)
+                    .title(function(d) { return  d.value.sums ; })
+
                     .compose([
                         nonzero_min(dc.lineChart(reactivePowerLine)
                             .dimension(hourDimension)
@@ -325,7 +327,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                             .dotRadius([10])
                             .group(avgReactivePowerGroup, 'Reactive Power')
                             .valueAccessor(function (d) {
-                                  return d.value.averages;
+                                  return d.value.sums;
                               })
                             .dashStyle([2,2]))
                             .defined(function(d) {
@@ -335,19 +337,16 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                     .elasticY(true)
                     .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
                     .on('renderlet', function(chart) {
-                        chart.selectAll('circle.dot')
                         chart.selectAll('g.y text')
                           .attr('transform', 'translate(-5,-7) rotate(315)')
-                            // .on('mouseover.foo', function(d) {
-                            //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                            //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                            //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                            // })
-                            .on('mouseout.foo', function(d) {
-                                //console.log('out')
-                            });
-                    });
-                    reactivePowerLine.yAxis().tickFormat(d3.format('.0f'))
+                    })
+                          .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('Reac. Power, [GigaVARs]');
+       //different for x-axis label
+    });
+	            reactivePowerLine.yAxis().tickFormat(d3.format('.2f'))
                     reactivePowerLine.yAxis().ticks(3)
                  /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                     //.renderArea(true)
@@ -358,11 +357,14 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               //.width(600)
               //.height(225)
               .x(d3.scale.linear().domain([0, 23]))
-              .mouseZoomable(true)
-              .yAxisLabel("Degrees, [deg]",30)
+              .mouseZoomable(false)
+
+              .yAxisLabel("",30)
               .xAxisLabel("Hour of Day")
               .renderHorizontalGridLines(true)
               .brushOn(false)
+              .title(function(d) { return  d.value.averages ; })
+
               .compose([
                   nonzero_min(dc.lineChart(voltageAngleLine)
                       .dimension(hourDimension)
@@ -380,19 +382,16 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               .elasticY(true)
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
-                  chart.selectAll('circle.dot')
                   chart.selectAll('g.y text')
                     .attr('transform', 'translate(-5,-7) rotate(315)')
-                      // .on('mouseover.foo', function(d) {
-                      //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                      //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                      //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                      // })
-                      .on('mouseout.foo', function(d) {
-                          //console.log('out')
-                      });
-              });
-              voltageAngleLine.yAxis().tickFormat(d3.format('.0f'))
+              })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('Voltage Angle, [Degrees]');
+       //different for x-axis label
+    });
+              voltageAngleLine.yAxis().tickFormat(d3.format('.3f'))
               voltageAngleLine.yAxis().ticks(3)
            /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               //.renderArea(true)
@@ -401,11 +400,14 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
 
    powerFlowLine
           .x(d3.scale.linear().domain([0, 23]))
-          .mouseZoomable(true)
-          .yAxisLabel("Kilowatts, [kW]",30)
+          .mouseZoomable(false)
+
+          .yAxisLabel("",30)
           .xAxisLabel("Hour of Day")
           .renderHorizontalGridLines(true)
           .brushOn(false)
+          .title(function(d) { return  d.value.sums ; })
+
           .compose([
               nonzero_min(dc.lineChart(powerFlowLine)
                   .dimension(lineHourDimension)
@@ -413,7 +415,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                   .dotRadius([10])
                   .group(avgReactiveFromGroup, 'Active Power From')
                   .valueAccessor(function (d) {
-                        return d.value.averages;
+                        return d.value.sums;
                     })
                   .dashStyle([2,2]))
                   .defined(function(d) {
@@ -425,7 +427,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                   .dotRadius([10])
                   .group(avgReactiveToGroup, 'Active Power To')
                   .valueAccessor(function (d) {
-                        return d.value.averages;
+                        return d.value.sums;
                     })
                   .dashStyle([5,5]))
                   .defined(function(d) {
@@ -435,28 +437,28 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
           .elasticY(true)
           .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
           .on('renderlet', function(chart) {
-              chart.selectAll('circle.dot')
               chart.selectAll('g.y text')
                 .attr('transform', 'translate(-5,-7) rotate(315)')
-                  // .on('mouseover.foo', function(d) {
-                  //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                  //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                  //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                  // })
-                  .on('mouseout.foo', function(d) {
-                      //console.log('out')
-                  });
-          });
-          powerFlowLine.yAxis().tickFormat(d3.format('.0f'))
+          })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('Active Power, [GW]');
+       //different for x-axis label
+    });
+          powerFlowLine.yAxis().tickFormat(d3.format('.2f'))
           powerFlowLine.yAxis().ticks(3)
 
    reactiveFlowLine
               .x(d3.scale.linear().domain([0, 23]))
-              .mouseZoomable(true)
-              .yAxisLabel("KiloVARs, [kVARs]",30)
+              .mouseZoomable(false)
+
+              .yAxisLabel("",30)
               .xAxisLabel("Hour of Day")
               .renderHorizontalGridLines(true)
               .brushOn(false)
+              .title(function(d) { return  d.value.sums ; })
+
               .compose([
                   nonzero_min(dc.lineChart(reactiveFlowLine)
                       .dimension(lineHourDimension)
@@ -464,7 +466,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                       .dotRadius([10])
                       .group(avgReactiveFromGroup, 'Reactive Power From')
                       .valueAccessor(function (d) {
-                            return d.value.averages;
+                            return d.value.sums;
                         })
                       .dashStyle([2,2]))
                       .defined(function(d) {
@@ -476,7 +478,7 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
                       .dotRadius([10])
                       .group(avgReactiveToGroup, 'Reactive Power To')
                       .valueAccessor(function (d) {
-                            return d.value.averages;
+                            return d.value.sums;
                         })
                       .dashStyle([5,5]))
                       .defined(function(d) {
@@ -486,19 +488,16 @@ reactivePowerLine /* dc.lineChart('#monthly-move-chart', 'chartGroup') */
               .elasticY(true)
               .legend(dc.legend().x(100).horizontal(true).autoItemWidth(true))
               .on('renderlet', function(chart) {
-                  chart.selectAll('circle.dot')
                   chart.selectAll('g.y text')
                     .attr('transform', 'translate(-5,-7) rotate(315)')
-                      // .on('mouseover.foo', function(d) {
-                      //     heatmapLayer.setData(heatmapData['voltage_A'][d.data.key]);
-                      //     heatmapLayerB.setData(heatmapData['voltage_B'][d.data.key]);
-                      //     heatmapLayerC.setData(heatmapData['voltage_C'][d.data.key]);
-                      // })
-                      .on('mouseout.foo', function(d) {
-                          //console.log('out')
-                      });
-              });
-              reactiveFlowLine.yAxis().tickFormat(d3.format('.0f'))
+              })
+      .on('postRender', function(chart) {
+       chart.svg().append('text').attr('class', 'y-label').attr('text-anchor', 'middle')
+          .attr('x', -80).attr('y', 40).attr('dy', '-25').attr('transform', 'rotate(-90)')
+          .text('Reac. Power, [GigaVARs]');
+       //different for x-axis label
+    });
+              reactiveFlowLine.yAxis().tickFormat(d3.format('.2f'))
               reactiveFlowLine.yAxis().ticks(3)
 
       // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
